@@ -45,9 +45,6 @@ vector<unique_ptr<Token>> tokenize(string& str) {
                     case 'W':
                         // not alpha or space
                         break;
-                    case 't':
-                        // tab
-                        break;
                     case 's':
                         // space
                         break;
