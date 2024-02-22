@@ -14,7 +14,11 @@ using std::set;
  * Or, Concat are infix operators
 */
 enum TokenType : char {
-    Literal, Charset, Repeat, Or, Concat, OpenGroup, CloseGroup
+    Literal, Charset, Repeat, Or, Concat, OpenGroup, CloseGroup, Backref, Edge
+};
+
+enum EdgeType : char {
+    StartWord, EndWord, Edge, NotEdge
 };
 
 struct Token {
@@ -34,6 +38,16 @@ struct RepeatToken : public Token {
     unsigned char UpperBound, LowerBound;
 };
 
-struct OpenGroupToken : public Token {
+/**
+ * For open and close group, as well as backref
+*/
+struct GroupToken : public Token {
     unsigned char GroupNumber;
+};
+
+/**
+ * For \b \B \< \>
+*/
+struct EdgeToken : public Token {
+    EdgeType edgeType;
 };
