@@ -5,8 +5,11 @@
 #include "Tokenizer.h"
 
 using std::find;
+using std::vector;
+using std::string;
+using std::set;
 
-vector<Token*> tokenize(string& str) {
+vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
     vector<Token*> tokens;
     string lit;
     const char* input = str.c_str();
@@ -117,6 +120,10 @@ vector<Token*> tokenize(string& str) {
                     }
                     else if (num2 > INFINITE_REPEAT) {
                         // ERROR argument is too large
+                        fail = true;
+                    }
+                    if (num2 < num) {
+                        // ERROR second argument must be greater than or equal to first argument
                         fail = true;
                     }
                     if (*input == '}') {
@@ -267,6 +274,7 @@ vector<Token*> tokenize(string& str) {
                             	lit.clear();
                             }
                             tokens.push_back(new GroupToken(Backref, n));
+                            backrefs->insert(n);
                             break;
                         }
                         // ERROR unknown escape character
@@ -296,6 +304,7 @@ vector<Token*> tokenize(string& str) {
     
     return tokens;
 fail:
+    backrefs->clear();
     for (auto el : tokens) {
         delete el;
     }

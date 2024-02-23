@@ -3,7 +3,7 @@
 #include <string>
 #include <set>
 
-#define INFINITE_REPEAT 0xFF
+#define INFINITE_REPEAT 0xFFFFFFFF
 
 using std::string;
 using std::set;
@@ -43,7 +43,7 @@ struct CharsetToken : public Token {
 };
 
 struct RepeatToken : public Token {
-    unsigned char lowerBound, upperBound;
+    unsigned int lowerBound, upperBound;
 
     RepeatToken(unsigned char lBound, unsigned char uBound) : Token(Repeat), lowerBound(lBound), upperBound(uBound) { }
 };
