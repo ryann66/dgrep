@@ -6,19 +6,9 @@
 
 using std::find;
 
-string lit;
-
-/**
- * Clears out the lit variable and returns the resultant token
-*/
-Token* flushLit() {
-    Token* t = new LiteralToken(lit);
-    lit.clear();
-    return t;
-}
-
 vector<Token*> tokenize(string& str) {
     vector<Token*> tokens;
+    string lit;
     const char* input = str.c_str();
     bool fail = false;
     unsigned char maxGroupNum = 0;
@@ -27,7 +17,10 @@ vector<Token*> tokenize(string& str) {
     while (*input) {
         switch(*input) {
             case '(':  // open
-                flushLit();
+                if (lit.empty()) {
+                	tokens.push_back(new LiteralToken(lit));
+                	lit.clear();
+                }
                 tokens.push_back(new GroupToken(OpenGroup, ++maxGroupNum));
                 openGroups.push_back(maxGroupNum);
                 break;
@@ -37,7 +30,10 @@ vector<Token*> tokenize(string& str) {
                     fail = true;
                     break;
                 }
-                flushLit();
+                if (lit.empty()) {
+                	tokens.push_back(new LiteralToken(lit));
+                	lit.clear();
+                }
                 tokens.push_back(new GroupToken(CloseGroup, openGroups.back()));
                 openGroups.pop_back();
                 break;
@@ -67,7 +63,10 @@ vector<Token*> tokenize(string& str) {
                         fail = true;
                         break;
                     }
-                    flushLit();
+                    if (lit.empty()) {
+                    	tokens.push_back(new LiteralToken(lit));
+                    	lit.clear();
+                    }
                     tokens.push_back(new RepeatToken(0, num));
                     break;
                 }
@@ -87,7 +86,10 @@ vector<Token*> tokenize(string& str) {
                 }
                 // {num}
                 if (*input == '}') {
-                    flushLit();
+                    if (lit.empty()) {
+                    	tokens.push_back(new LiteralToken(lit));
+                    	lit.clear();
+                    }
                     tokens.push_back(new RepeatToken(num, num));
                     break;
                 }
@@ -95,7 +97,10 @@ vector<Token*> tokenize(string& str) {
                     input++;
                     // {num,}
                     if (*input == '}') {
-                        flushLit();
+                        if (lit.empty()) {
+                        	tokens.push_back(new LiteralToken(lit));
+                        	lit.clear();
+                        }
                         tokens.push_back(new RepeatToken(num, INFINITE_REPEAT));
                         break;
                     }
@@ -115,7 +120,10 @@ vector<Token*> tokenize(string& str) {
                         fail = true;
                     }
                     if (*input == '}') {
-                        flushLit();
+                        if (lit.empty()) {
+                        	tokens.push_back(new LiteralToken(lit));
+                        	lit.clear();
+                        }
                         tokens.push_back(new RepeatToken(num, num2));
                         break;
                     }
@@ -129,23 +137,38 @@ vector<Token*> tokenize(string& str) {
                 input--;
                 break;
             case '[':  // charset start
-                flushLit();
+                if (lit.empty()) {
+                	tokens.push_back(new LiteralToken(lit));
+                	lit.clear();
+                }
                 // TODO
                 break;
             case '|':  // or
-                flushLit();
+                if (lit.empty()) {
+                	tokens.push_back(new LiteralToken(lit));
+                	lit.clear();
+                }
                 tokens.push_back(new Token(Or));
                 break;
             case '?':  // zero or one
-                flushLit();
+                if (lit.empty()) {
+                	tokens.push_back(new LiteralToken(lit));
+                	lit.clear();
+                }
                 tokens.push_back(new RepeatToken(0, 1));
                 break;
             case '*':  // any number
-                flushLit();
+                if (lit.empty()) {
+                	tokens.push_back(new LiteralToken(lit));
+                	lit.clear();
+                }
                 tokens.push_back(new RepeatToken(0, INFINITE_REPEAT));
                 break;
             case '+':  // at least one
-                flushLit();
+                if (lit.empty()) {
+                	tokens.push_back(new LiteralToken(lit));
+                	lit.clear();
+                }
                 tokens.push_back(new RepeatToken(1, INFINITE_REPEAT));
                 break;
             case '\\':
@@ -153,42 +176,66 @@ vector<Token*> tokenize(string& str) {
                 switch(*input) {
                     case 'b':
                         // edge of word
-                        flushLit();
+                        if (lit.empty()) {
+                        	tokens.push_back(new LiteralToken(lit));
+                        	lit.clear();
+                        }
                         tokens.push_back(new EdgeToken(IsEdge));
                         break;
                     case 'B':
                         // not edge of word
-                        flushLit();
+                        if (lit.empty()) {
+                        	tokens.push_back(new LiteralToken(lit));
+                        	lit.clear();
+                        }
                         tokens.push_back(new EdgeToken(NotEdge));
                         break;
                     case '<':
                         // start of word
-                        flushLit();
+                        if (lit.empty()) {
+                        	tokens.push_back(new LiteralToken(lit));
+                        	lit.clear();
+                        }
                         tokens.push_back(new EdgeToken(StartWord));
                         break;
                     case '>':
                         // end of word
-                        flushLit();
+                        if (lit.empty()) {
+                        	tokens.push_back(new LiteralToken(lit));
+                        	lit.clear();
+                        }
                         tokens.push_back(new EdgeToken(EndWord));
                         break;
                     case 'w':
                         // alpha or space
-                        flushLit();
+                        if (lit.empty()) {
+                        	tokens.push_back(new LiteralToken(lit));
+                        	lit.clear();
+                        }
                         // TODO
                         break;
                     case 'W':
                         // not alpha or space
-                        flushLit();
+                        if (lit.empty()) {
+                        	tokens.push_back(new LiteralToken(lit));
+                        	lit.clear();
+                        }
                         // TODO
                         break;
                     case 's':
                         // space
-                        flushLit();
+                        if (lit.empty()) {
+                        	tokens.push_back(new LiteralToken(lit));
+                        	lit.clear();
+                        }
                         // TODO
                         break;
                     case 'S':
                         // non space
-                        flushLit();
+                        if (lit.empty()) {
+                        	tokens.push_back(new LiteralToken(lit));
+                        	lit.clear();
+                        }
                         // TODO
                         break;
                     case '*':
@@ -215,7 +262,10 @@ vector<Token*> tokenize(string& str) {
                                 fail = true;
                                 break;
                             }
-                            flushLit();
+                            if (lit.empty()) {
+                            	tokens.push_back(new LiteralToken(lit));
+                            	lit.clear();
+                            }
                             tokens.push_back(new GroupToken(Backref, n));
                             break;
                         }
@@ -239,7 +289,11 @@ vector<Token*> tokenize(string& str) {
         lit.clear();
         goto fail;
     }
-    tokens.push_back(flushLit());
+    if (lit.empty()) {
+        tokens.push_back(new LiteralToken(lit));
+        lit.clear();
+    }
+    
     return tokens;
 fail:
     for (auto el : tokens) {
