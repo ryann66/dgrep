@@ -31,15 +31,17 @@ struct LiteralToken : public Token {
     string lit;
 
     LiteralToken(string& s) : Token(Literal), lit(s) { }
-
-    // TODO: forward iterator
 };
 
 struct CharsetToken : public Token {
+  private:
     bool isNegation;
     set<char> chars;
-
+    
+  public:
     CharsetToken(bool isNeg, set<char> chs) : Token(Charset), isNegation(isNeg), chars(chs) { }
+
+    // TODO: forward iterator
 };
 
 struct RepeatToken : public Token {

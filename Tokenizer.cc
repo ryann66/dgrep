@@ -1,6 +1,7 @@
 #include <cstdlib>
 #include <cerrno>
 #include <algorithm>
+#include <stack>
 
 #include "Tokenizer.h"
 
@@ -8,6 +9,40 @@ using std::find;
 using std::vector;
 using std::string;
 using std::set;
+using std::stack;
+
+void addLower(stack<char>& s) {
+    for (char c = 'a'; c <= 'z'; c++) {
+        s.push(c);
+    }
+}
+
+void addUpper(stack<char>& s) {
+    for (char c = 'A'; c <= 'Z'; c++) {
+        s.push(c);
+    }
+}
+
+void addDigits(stack<char>& s) {
+    for (char c = '0'; c <= '9'; c++) {
+        s.push(c);
+    }
+}
+
+void addPunct(stack<char>& s) {
+    for (char c = '!'; c <= '/'; c++) {
+        s.push(c);
+    }
+    for (char c = ':'; c <= '@'; c++) {
+        s.push(c);
+    }
+    for (char c = '['; c <= '`'; c++) {
+        s.push(c);
+    }
+    for (char c = '{'; c <= '~'; c++) {
+        s.push(c);
+    }
+}
 
 vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
     vector<Token*> tokens;
@@ -148,7 +183,12 @@ vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
                 	tokens.push_back(new LiteralToken(lit));
                 	lit.clear();
                 }
-                // TODO
+                Token* cht = readCharset(&input);
+                if (cht == nullptr) {
+                    fail = true;
+                } else {
+                    tokens.push_back(cht);
+                }                
                 break;
             case '|':  // or
                 if (lit.empty()) {
@@ -310,4 +350,152 @@ fail:
     }
     vector<Token*> r;
     return r;
+}
+
+CharsetToken* readCharset(const char** strPointer) {
+    const char*& input = *strPointer;
+    bool negation = false;
+    stack<char> chs;
+
+    if (*input != '[') {
+        // ERROR not a characterset
+        return nullptr;
+    }
+    input++;
+
+    if (*input == '^') {
+        negation = true;
+    }
+    else {
+        chs.push(*input);
+    }
+    
+    while (*input != ']') {
+        if (*input == '\0') {
+            // ERROR unmatched [
+            return nullptr;
+        }
+        if (*input == ':' && !chs.empty() && chs.top() == '[') {
+            // named class
+            chs.pop();
+            input++;
+            const char* it = input;
+
+            // find end
+            while (!(*it == ':' && *(it + 1) == ']')) {
+                if (*it == '\0') {
+                    // ERROR unmatched [:
+                    return nullptr;
+                }
+                it++;
+            }
+
+            // extract string
+            char* cstr = new char[it - input + 1];
+            size_t i = 0;
+            while (input != it) {
+                cstr[i++] = *input++;
+            }
+            cstr[i] = '\0';
+            string str(cstr);
+            delete cstr;
+            input++;
+            // input points to ]
+
+            // find correct string
+            if (str == "alnum") {
+                addLower(chs);
+                addUpper(chs);
+                addDigits(chs);
+            } else if (str == "alpha") {
+                addLower(chs);
+                addUpper(chs);
+            } else if (str == "blank") {
+                chs.push(' ');
+                chs.push('\t');
+            } else if (str == "cntrl") {
+                for (char c = '0'; c <= '31'; c++) {
+                    chs.push(c);
+                }
+                chs.push(127);
+            } else if (str == "digit") {
+                addDigits(chs);
+            } else if (str == "graph") {
+                addLower(chs);
+                addUpper(chs);
+                addDigits(chs);
+                addPunct(chs);
+            } else if (str == "lower") {
+                addLower(chs);
+            } else if (str == "print") {
+                addLower(chs);
+                addUpper(chs);
+                addDigits(chs);
+                addPunct(chs);
+                chs.push(' ');
+            } else if (str == "punct") {
+                addPunct(chs);
+            } else if (str == "space") {
+                for (char c = '9'; c <= '13'; c++) {
+                    chs.push(c);
+                }
+                chs.push(' ');
+            } else if (str == "upper") {
+                addUpper(chs);
+            } else if (str == "xdigit") {
+                addDigits(chs);
+                for (char c = 'a'; c <= 'f'; c++) {
+                    chs.push(c);
+                }
+                for (char c = 'A'; c <= 'F'; c++) {
+                    chs.push(c);
+                }
+            } else {
+                // ERROR named class
+                return nullptr;
+            }
+        }
+        else if (*input == '-') {
+            // range
+            input++;
+            if (*input == ']') {
+                chs.push('-');
+                break;
+            }
+
+            char begin = chs.top(), end = *input;
+            chs.pop();
+            if (begin < end) {
+                // ERROR end is before begin
+                return nullptr;
+            }
+            for (char c = begin; c <= end; c++) {
+                if (c == 127) continue;
+                chs.push(c);
+            }
+            
+            input++;
+
+            // shield against double ranges
+            if (*input == '-' && *(input + 1) != ']') {
+                // ERROR [a-b-c] invalid
+                return nullptr;
+            }
+        }
+        else {
+            // normal char
+            chs.push(*input);
+            input++;
+        }
+        // input is left pointing at first unread char
+    }
+
+    set<char> chars;
+    while (!chs.empty()) {
+        chars.insert(chs.top());
+        chs.pop();
+    }
+
+    // leave input on trailing ]
+    return new CharsetToken(negation, chars);
 }

@@ -14,3 +14,12 @@
  * NOTE: Caller is responsible for freeing all tokens in the vector
 */
 std::vector<Token*> tokenize(std::string& str, std::set<unsigned char> backrefs);
+
+/**
+ * Reads a character set from the string pointed to by strPointer
+ * On success, leaves the string pointer pointing to the closing ] of the character set
+ *  returns the parsed character set
+ * On failure, returns null and the string pointer is undefined
+ * NOTE: Caller is responsible for freeing returned token, unless it is nullptr
+*/
+CharsetToken* readCharset(const char** strPointer);
