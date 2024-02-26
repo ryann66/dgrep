@@ -44,6 +44,13 @@ void addPunct(stack<char>& s) {
     }
 }
 
+void addSpace(stack<char>& s) {
+    for (char c = '9'; c <= '13'; c++) {
+        s.push(c);
+    }
+    s.push(' ');
+}
+
 vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
     vector<Token*> tokens;
     string lit;
@@ -259,7 +266,19 @@ vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
                         	tokens.push_back(new LiteralToken(lit));
                         	lit.clear();
                         }
-                        // TODO
+                        {
+                            stack<char> s;
+                            addDigits(s);
+                            addLower(s);
+                            addUpper(s);
+                            set<char> st;
+                            st.insert(' ');
+                            while (!s.empty()) {
+                                st.insert(s.top());
+                                s.pop();
+                            }
+                            tokens.push_back(new CharsetToken(false, st));
+                        }
                         break;
                     case 'W':
                         // not alpha or space
@@ -267,7 +286,19 @@ vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
                         	tokens.push_back(new LiteralToken(lit));
                         	lit.clear();
                         }
-                        // TODO
+                        {
+                            stack<char> s;
+                            addDigits(s);
+                            addLower(s);
+                            addUpper(s);
+                            set<char> st;
+                            st.insert(' ');
+                            while (!s.empty()) {
+                                st.insert(s.top());
+                                s.pop();
+                            }
+                            tokens.push_back(new CharsetToken(true, st));
+                        }
                         break;
                     case 's':
                         // space
@@ -275,7 +306,17 @@ vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
                         	tokens.push_back(new LiteralToken(lit));
                         	lit.clear();
                         }
-                        // TODO
+                        {
+                            stack<char> s;
+                            addSpace(s);
+                            set<char> st;
+                            st.insert(' ');
+                            while (!s.empty()) {
+                                st.insert(s.top());
+                                s.pop();
+                            }
+                            tokens.push_back(new CharsetToken(false, st));
+                        }
                         break;
                     case 'S':
                         // non space
@@ -283,7 +324,17 @@ vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
                         	tokens.push_back(new LiteralToken(lit));
                         	lit.clear();
                         }
-                        // TODO
+                        {
+                            stack<char> s;
+                            addSpace(s);
+                            set<char> st;
+                            st.insert(' ');
+                            while (!s.empty()) {
+                                st.insert(s.top());
+                                s.pop();
+                            }
+                            tokens.push_back(new CharsetToken(true, st));
+                        }
                         break;
                     case '*':
                     case '+':
@@ -436,10 +487,7 @@ CharsetToken* readCharset(const char** strPointer) {
             } else if (str == "punct") {
                 addPunct(chs);
             } else if (str == "space") {
-                for (char c = '9'; c <= '13'; c++) {
-                    chs.push(c);
-                }
-                chs.push(' ');
+                addSpace(chs);
             } else if (str == "upper") {
                 addUpper(chs);
             } else if (str == "xdigit") {
