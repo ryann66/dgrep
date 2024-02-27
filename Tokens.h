@@ -11,10 +11,10 @@ using std::set;
 /**
  * Literal, Charset are values
  * Repeat is a suffix operator
- * Or, Concat are infix operators
+ * Or, Edge are infix operators
 */
 enum TokenType : char {
-    Literal, Charset, Repeat, Or, Concat, OpenGroup, CloseGroup, Backref, Edge
+    Literal, Charset, Repeat, Or, OpenGroup, CloseGroup, Backref, Edge
 };
 
 enum EdgeType : char {
