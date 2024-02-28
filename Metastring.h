@@ -22,6 +22,7 @@ class Metastring {
      * Concats, if conflicts encountered in metadata, the latter's will be preserved
     */
     friend Metastring operator+(const Metastring& lhs, const Metastring rhs);
+    Metastring& operator+=(const Metastring& rhs);
 
     /**
      * Returns the backing string
@@ -35,19 +36,30 @@ class Metastring {
     char lastChar() const;
 
     /**
-     * Toggles logging of backref characters
+     * Toggles logging of backref characters, respectively
     */
-    void toggleBackref(unsigned char br);
+    void enableBackref(unsigned char br);
+    void disableBackref(unsigned char br);
 
     /**
      * Appends the value of the given backref onto this
     */
     Metastring& appendBackref(unsigned char br);
+
+    // Checks if this is invalid, and should be discarded
+    bool invalid() const;
     
  private:
+	// invalid constructor
+    Metastring(void*) : str(nullptr), backrefs(((size_t*) nullptr) - 1) { }
+
     // array of char locations for the start and end of backreferences
-    size_t* backrefStarts, *backrefEnds;
+    // NOTE: start values can be accessed with the backref number
+	// NOTE: ends of backrefs can be found by accessing backref number + maxBacckref
+    size_t* backrefs;
 
     // backing string, maximum length is global.h::maxLength
     char* str;
+    // length, excluding null char
+    size_t strlen;
 };

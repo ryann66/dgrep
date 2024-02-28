@@ -1,6 +1,12 @@
 {
     "files.associations": {
         "vector": "cpp",
-        "xstring": "cpp"
+        "xstring": "cpp",
+        "type_traits": "cpp",
+        "utility": "cpp",
+        "xmemory": "cpp",
+        "xtr1common": "cpp",
+        "xtree": "cpp",
+        "xutility": "cpp"
     }
 }
