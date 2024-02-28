@@ -37,14 +37,10 @@ struct LiteralToken : public Token {
 };
 
 struct CharsetToken : public Token {
-  private:
-    bool isNegation;
-    set<char> chars;
-    
   public:
-    CharsetToken(bool isNeg, set<char> chs) : Token(Charset), isNegation(isNeg), chars(chs) { }
+    CharsetToken(bool isNeg, const set<char>& chs);
 
-    // TODO: forward iterator
+    set<char> chars;
 };
 
 struct RepeatToken : public Token {
