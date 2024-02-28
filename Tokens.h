@@ -21,6 +21,9 @@ enum EdgeType : char {
     StartWord, EndWord, IsEdge, NotEdge
 };
 
+/**
+ * All tokens are immutable
+*/
 struct Token {
     TokenType type;
 
