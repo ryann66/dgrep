@@ -59,7 +59,7 @@ class RepeatNode : public Node {
 
 class OpenNode : public Node {
  public:
-    OpenNode(unsigned char br) : backref(br) { }
+    OpenNode(unsigned char br, Node* ch) : backref(br), child(ch) { }
     OpenNode(const OpenNode&) = default;
     virtual OpenNode& operator=(const OpenNode&) = default;
     virtual ~OpenNode();
@@ -68,11 +68,12 @@ class OpenNode : public Node {
 
  private:
     unsigned char backref;
+    Node* child;
 };
 
 class CloseNode : public Node {
  public:
-    CloseNode(unsigned char br) : backref(br) { }
+    CloseNode(unsigned char br, Node* ch) : backref(br), child(ch) { }
     CloseNode(const CloseNode&) = default;
     virtual CloseNode& operator=(const CloseNode&) = default;
     virtual ~CloseNode();
@@ -81,11 +82,12 @@ class CloseNode : public Node {
 
  private:
     unsigned char backref;
+    Node* child;
 };
 
 class BackrefNode : public Node {
  public:
-    BackrefNode(unsigned char br) : backref(br) { }
+    BackrefNode(unsigned char br, Node* ch) : backref(br), child(ch) { }
     BackrefNode(const BackrefNode&) = default;
     virtual BackrefNode& operator=(const BackrefNode&) = default;
     virtual ~BackrefNode();
@@ -94,18 +96,20 @@ class BackrefNode : public Node {
 
  private:
     unsigned char backref;
+    Node* child;
 };
 
 class InfixNode : public Node {
  public:
+    virtual ~InfixNode();
+
+    virtual std::set<Metastring> interpret() = 0;
+
+ protected:
     InfixNode(Node* lhs, Node* rhs) : ln(lhs), rn(rhs) { }
     InfixNode(const InfixNode&) = default;
     virtual InfixNode& operator=(const InfixNode&) = default;
-    virtual ~InfixNode();
 
-    virtual std::set<Metastring> interpret();
-
- protected:
     Node *ln, *rn;
 };
 
