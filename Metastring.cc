@@ -1,5 +1,6 @@
 #include "Metastring.h"
 #include "globals.h"
+#include "truncation_error.h"
 
 using std::string;
 
@@ -15,9 +16,7 @@ Metastring::Metastring() : strlen(0) {
 
 Metastring::Metastring(const std::string& str) : strlen(str.length()) {
     if (strlen >= maxLength) {
-        this->str = nullptr;
-        backrefs = ((size_t*) nullptr) - 1;
-        return;
+        throw truncation_error("literal too long");
     }
 
     backrefs = (new size_t[maxBackref * 2]) - 1;
@@ -33,12 +32,6 @@ Metastring::Metastring(const std::string& str) : strlen(str.length()) {
 }
 
 Metastring::Metastring(const Metastring& o) : strlen(o.strlen) {
-    if (o.invalid()) {
-        str = nullptr;
-        backrefs = ((size_t*) nullptr) - 1;
-        return;
-    }
-
     backrefs = (new size_t[maxBackref * 2]) - 1;
     for (unsigned char i = 1; i <= maxBackref * 2; i++) {
         backrefs[i] = o.backrefs[i];
@@ -52,12 +45,6 @@ Metastring::Metastring(const Metastring& o) : strlen(o.strlen) {
 }
 
 Metastring& Metastring::operator=(const Metastring& rhs) {
-    if (rhs.invalid()) {
-        delete str;
-        str = nullptr;
-        return;
-    }
-
     for (unsigned char i = 1; i <= maxBackref * 2; i++) {
         backrefs[i] = rhs.backrefs[i];
     }
@@ -74,8 +61,8 @@ Metastring::~Metastring() {
 }
 
 Metastring operator+(const Metastring& lhs, const Metastring rhs) {
-    if (lhs.strlen + rhs.strlen >= maxLength || lhs.invalid() || rhs.invalid()) {
-        return Metastring(nullptr);
+    if (lhs.strlen + rhs.strlen >= maxLength) {
+        throw truncation_error("string concat overflow");
     }
     Metastring m;
     m.strlen = lhs.strlen + rhs.strlen;
@@ -98,11 +85,8 @@ Metastring operator+(const Metastring& lhs, const Metastring rhs) {
 }
 
 Metastring& Metastring::operator+=(const Metastring& rhs) {
-    if (invalid()) return *this;
-    if (rhs.invalid() || strlen + rhs.strlen >= maxLength) {
-        delete str;
-        str = nullptr;
-        return *this;
+    if (strlen + rhs.strlen >= maxLength) {
+        throw truncation_error("string concat overflow");
     }
 
     char* s = str + strlen;
@@ -141,9 +125,7 @@ void Metastring::disableBackref(unsigned char br) {
 
 Metastring& Metastring::appendBackref(unsigned char br) {
     if (strlen + backrefs[maxBackref + br] - backrefs[br] >= maxLength) {
-        delete str;
-        str = nullptr;
-        return *this;
+        throw truncation_error("append backref overflow");
     }
     for (size_t i = backrefs[br]; i < backrefs[maxBackref + br]; i++) {
         str[strlen++] = str[i];

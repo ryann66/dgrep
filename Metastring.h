@@ -45,9 +45,6 @@ class Metastring {
      * Appends the value of the given backref onto this
     */
     Metastring& appendBackref(unsigned char br);
-
-    // Checks if this is invalid, and should be discarded
-    bool invalid() const;
     
  private:
 	// invalid constructor
