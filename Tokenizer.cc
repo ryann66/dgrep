@@ -2,14 +2,17 @@
 #include <cerrno>
 #include <algorithm>
 #include <stack>
+#include <stdexcept>
 
 #include "Tokenizer.h"
+#include "syntax_error.h"
 
 using std::find;
 using std::vector;
 using std::string;
 using std::set;
 using std::stack;
+using std::runtime_error;
 
 void addLower(stack<char>& s) {
     for (char c = 'a'; c <= 'z'; c++) {
@@ -55,352 +58,337 @@ vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
     vector<Token*> tokens;
     string lit;
     const char* input = str.c_str();
-    bool fail = false;
     unsigned char maxGroupNum = 0;
     vector<unsigned char> openGroups;  // iterable stack
-
-    while (*input) {
-        switch(*input) {
-            case '(':  // open
-                if (lit.empty()) {
-                	tokens.push_back(new LiteralToken(lit));
-                	lit.clear();
-                }
-                tokens.push_back(new GroupToken(OpenGroup, ++maxGroupNum));
-                openGroups.push_back(maxGroupNum);
-                break;
-            case ')':  // close
-                if (openGroups.empty()) {
-                    // ERROR unmatched )
-                    fail = true;
+    try {
+        while (*input) {
+            switch(*input) {
+                case '(':  // open
+                    if (lit.empty()) {
+                        tokens.push_back(new LiteralToken(lit));
+                        lit.clear();
+                    }
+                    tokens.push_back(new GroupToken(OpenGroup, ++maxGroupNum));
+                    openGroups.push_back(maxGroupNum);
                     break;
-                }
-                if (lit.empty()) {
-                	tokens.push_back(new LiteralToken(lit));
-                	lit.clear();
-                }
-                tokens.push_back(new GroupToken(CloseGroup, openGroups.back()));
-                openGroups.pop_back();
-                break;
-            case '{':  // arb repeat start
-                input++;
-                // either number or comma
-                long num;
-                // {,num}
-                if (*input == ',') {
+                case ')':  // close
+                    if (openGroups.empty()) {
+                        // ERROR unmatched )
+                        throw syntax_error("Unmatched )");
+                    }
+                    if (lit.empty()) {
+                        tokens.push_back(new LiteralToken(lit));
+                        lit.clear();
+                    }
+                    tokens.push_back(new GroupToken(CloseGroup, openGroups.back()));
+                    openGroups.pop_back();
+                    break;
+                case '{':  // arb repeat start
+                    input++;
+                    // either number or comma
+                    long num;
+                    // {,num}
+                    if (*input == ',') {
+                        num = strtol(input, const_cast<char**>(&input), 10);
+                        if (num == 0 && errno == EINVAL) {
+                            // ERROR {, must be followed by a number
+                            throw syntax_error("{, must be followed by a number");
+                        }
+                        if (num < 0) {
+                            // ERROR negative argument
+                            throw syntax_error("Negative argument");
+                        }
+                        else if (num > INFINITE_REPEAT) {
+                            // ERROR argument is too large
+                            throw syntax_error("Argument too large");
+                        }
+                        if (*input != '}') {
+                            // ERROR expected }
+                            throw syntax_error("} expected");
+                        }
+                        if (lit.empty()) {
+                            tokens.push_back(new LiteralToken(lit));
+                            lit.clear();
+                        }
+                        tokens.push_back(new RepeatToken(0, num));
+                        break;
+                    }
                     num = strtol(input, const_cast<char**>(&input), 10);
                     if (num == 0 && errno == EINVAL) {
-                        // ERROR {, must be followed by a number
-                        fail = true;
+                        // ERROR { must be followed by a number or comma
+                        throw syntax_error("{ must be followed by a number or comma");
                         break;
                     }
                     if (num < 0) {
                         // ERROR negative argument
-                        fail = true;
+                        throw syntax_error("Negative argument");
                     }
                     else if (num > INFINITE_REPEAT) {
                         // ERROR argument is too large
-                        fail = true;
+                        throw syntax_error("Argument too large");
                     }
-                    if (*input != '}') {
-                        // ERROR expected }
-                        input--;
-                        fail = true;
-                        break;
-                    }
-                    if (lit.empty()) {
-                    	tokens.push_back(new LiteralToken(lit));
-                    	lit.clear();
-                    }
-                    tokens.push_back(new RepeatToken(0, num));
-                    break;
-                }
-                num = strtol(input, const_cast<char**>(&input), 10);
-                if (num == 0 && errno == EINVAL) {
-                    // ERROR { must be followed by a number or comma
-                    fail = true;
-                    break;
-                }
-                if (num < 0) {
-                    // ERROR negative argument
-                    fail = true;
-                }
-                else if (num > INFINITE_REPEAT) {
-                    // ERROR argument is too large
-                    fail = true;
-                }
-                // {num}
-                if (*input == '}') {
-                    if (lit.empty()) {
-                    	tokens.push_back(new LiteralToken(lit));
-                    	lit.clear();
-                    }
-                    tokens.push_back(new RepeatToken(num, num));
-                    break;
-                }
-                if (*input == ',') {
-                    input++;
-                    // {num,}
+                    // {num}
                     if (*input == '}') {
                         if (lit.empty()) {
-                        	tokens.push_back(new LiteralToken(lit));
-                        	lit.clear();
+                            tokens.push_back(new LiteralToken(lit));
+                            lit.clear();
                         }
-                        tokens.push_back(new RepeatToken(num, INFINITE_REPEAT));
+                        tokens.push_back(new RepeatToken(num, num));
                         break;
                     }
-                    // {num,num}
-                    long num2 = strtol(input, const_cast<char**>(&input), 10);
-                    if (num2 == 0 && errno == EINVAL) {
-                        // ERROR {num, must be followed by a number or }
-                        fail = true;
-                        break;
-                    }
-                    if (num2 < 0) {
-                        // ERROR negative argument
-                        fail = true;
-                    }
-                    else if (num2 > INFINITE_REPEAT) {
-                        // ERROR argument is too large
-                        fail = true;
-                    }
-                    if (num2 < num) {
-                        // ERROR second argument must be greater than or equal to first argument
-                        fail = true;
-                    }
-                    if (*input == '}') {
-                        if (lit.empty()) {
-                        	tokens.push_back(new LiteralToken(lit));
-                        	lit.clear();
-                        }
-                        tokens.push_back(new RepeatToken(num, num2));
-                        break;
-                    }
-                    // ERROR expected } after {num,num
-                    fail = true;
-                    input--;
-                    break;
-                }
-                // ERROR {num expected to be followed by , or }
-                fail = true;
-                input--;
-                break;
-            case '[':  // charset start
-                if (lit.empty()) {
-                	tokens.push_back(new LiteralToken(lit));
-                	lit.clear();
-                }
-                Token* cht = readCharset(&input);
-                if (cht == nullptr) {
-                    fail = true;
-                } else {
-                    tokens.push_back(cht);
-                }                
-                break;
-            case '|':  // or
-                if (lit.empty()) {
-                	tokens.push_back(new LiteralToken(lit));
-                	lit.clear();
-                }
-                tokens.push_back(new Token(Or));
-                break;
-            case '?':  // zero or one
-                if (lit.empty()) {
-                	tokens.push_back(new LiteralToken(lit));
-                	lit.clear();
-                }
-                tokens.push_back(new RepeatToken(0, 1));
-                break;
-            case '*':  // any number
-                if (lit.empty()) {
-                	tokens.push_back(new LiteralToken(lit));
-                	lit.clear();
-                }
-                tokens.push_back(new RepeatToken(0, INFINITE_REPEAT));
-                break;
-            case '+':  // at least one
-                if (lit.empty()) {
-                	tokens.push_back(new LiteralToken(lit));
-                	lit.clear();
-                }
-                tokens.push_back(new RepeatToken(1, INFINITE_REPEAT));
-                break;
-            case '\\':
-                input++;
-                switch(*input) {
-                    case 'b':
-                        // edge of word
-                        if (lit.empty()) {
-                        	tokens.push_back(new LiteralToken(lit));
-                        	lit.clear();
-                        }
-                        tokens.push_back(new EdgeToken(IsEdge));
-                        break;
-                    case 'B':
-                        // not edge of word
-                        if (lit.empty()) {
-                        	tokens.push_back(new LiteralToken(lit));
-                        	lit.clear();
-                        }
-                        tokens.push_back(new EdgeToken(NotEdge));
-                        break;
-                    case '<':
-                        // start of word
-                        if (lit.empty()) {
-                        	tokens.push_back(new LiteralToken(lit));
-                        	lit.clear();
-                        }
-                        tokens.push_back(new EdgeToken(StartWord));
-                        break;
-                    case '>':
-                        // end of word
-                        if (lit.empty()) {
-                        	tokens.push_back(new LiteralToken(lit));
-                        	lit.clear();
-                        }
-                        tokens.push_back(new EdgeToken(EndWord));
-                        break;
-                    case 'w':
-                        // alpha or space
-                        if (lit.empty()) {
-                        	tokens.push_back(new LiteralToken(lit));
-                        	lit.clear();
-                        }
-                        {
-                            stack<char> s;
-                            addDigits(s);
-                            addLower(s);
-                            addUpper(s);
-                            set<char> st;
-                            st.insert(' ');
-                            while (!s.empty()) {
-                                st.insert(s.top());
-                                s.pop();
-                            }
-                            tokens.push_back(new CharsetToken(false, st));
-                        }
-                        break;
-                    case 'W':
-                        // not alpha or space
-                        if (lit.empty()) {
-                        	tokens.push_back(new LiteralToken(lit));
-                        	lit.clear();
-                        }
-                        {
-                            stack<char> s;
-                            addDigits(s);
-                            addLower(s);
-                            addUpper(s);
-                            set<char> st;
-                            st.insert(' ');
-                            while (!s.empty()) {
-                                st.insert(s.top());
-                                s.pop();
-                            }
-                            tokens.push_back(new CharsetToken(true, st));
-                        }
-                        break;
-                    case 's':
-                        // space
-                        if (lit.empty()) {
-                        	tokens.push_back(new LiteralToken(lit));
-                        	lit.clear();
-                        }
-                        {
-                            stack<char> s;
-                            addSpace(s);
-                            set<char> st;
-                            st.insert(' ');
-                            while (!s.empty()) {
-                                st.insert(s.top());
-                                s.pop();
-                            }
-                            tokens.push_back(new CharsetToken(false, st));
-                        }
-                        break;
-                    case 'S':
-                        // non space
-                        if (lit.empty()) {
-                        	tokens.push_back(new LiteralToken(lit));
-                        	lit.clear();
-                        }
-                        {
-                            stack<char> s;
-                            addSpace(s);
-                            set<char> st;
-                            st.insert(' ');
-                            while (!s.empty()) {
-                                st.insert(s.top());
-                                s.pop();
-                            }
-                            tokens.push_back(new CharsetToken(true, st));
-                        }
-                        break;
-                    case '*':
-                    case '+':
-                    case '?':
-                    case '{':
-                    case '[':
-                    case '(':
-                    case '}':
-                    case ']':
-                    case ')':
-                    case '|':
-                    case '\\':
-                        lit.push_back(*input);
-                    case '\0':
-                        // ERROR trailing escape
-                        goto fail;
-                    default:
-                        if (*input > 48 && *input < 58) {
-                            // digit (backref)
-                            unsigned char n = *input - 48;
-                            if (n > maxGroupNum || find(openGroups.begin(), openGroups.end(), n) != openGroups.end()) {
-                                // ERROR group is currently open
-                                fail = true;
-                                break;
-                            }
+                    if (*input == ',') {
+                        input++;
+                        // {num,}
+                        if (*input == '}') {
                             if (lit.empty()) {
-                            	tokens.push_back(new LiteralToken(lit));
-                            	lit.clear();
+                                tokens.push_back(new LiteralToken(lit));
+                                lit.clear();
                             }
-                            tokens.push_back(new GroupToken(Backref, n));
-                            backrefs->insert(n);
+                            tokens.push_back(new RepeatToken(num, INFINITE_REPEAT));
                             break;
                         }
-                        // ERROR unknown escape character
-                        fail = true;
+                        // {num,num}
+                        long num2 = strtol(input, const_cast<char**>(&input), 10);
+                        if (num2 == 0 && errno == EINVAL) {
+                            // ERROR {num, must be followed by a number or }
+                            throw syntax_error("{<num>, must be followed by a number of }");
+                            break;
+                        }
+                        if (num2 < 0) {
+                            // ERROR negative argument
+                            throw syntax_error("Negative argument");
+                        }
+                        else if (num2 > INFINITE_REPEAT) {
+                            // ERROR argument is too large
+                            throw syntax_error("Argument too large");
+                        }
+                        if (num2 < num) {
+                            // ERROR second argument must be greater than or equal to first argument
+                            throw syntax_error("First argument exceeds second argument");
+                        }
+                        if (*input == '}') {
+                            if (lit.empty()) {
+                                tokens.push_back(new LiteralToken(lit));
+                                lit.clear();
+                            }
+                            tokens.push_back(new RepeatToken(num, num2));
+                            break;
+                        }
+                        // ERROR expected } after {num,num
+                        throw syntax_error("{<num>,<num> must be followed by }");
+                        input--;
                         break;
-                }
-                break;
-            default:
-                lit.push_back(*input);
-                break;
+                    }
+                    // ERROR {num expected to be followed by , or }
+                    throw syntax_error("{<num> must be followed by , or }");
+                    input--;
+                    break;
+                case '[':  // charset start
+                    if (lit.empty()) {
+                        tokens.push_back(new LiteralToken(lit));
+                        lit.clear();
+                    }
+                    tokens.push_back(readCharset(&input));              
+                    break;
+                case '|':  // or
+                    if (lit.empty()) {
+                        tokens.push_back(new LiteralToken(lit));
+                        lit.clear();
+                    }
+                    tokens.push_back(new Token(Or));
+                    break;
+                case '?':  // zero or one
+                    if (lit.empty()) {
+                        tokens.push_back(new LiteralToken(lit));
+                        lit.clear();
+                    }
+                    tokens.push_back(new RepeatToken(0, 1));
+                    break;
+                case '*':  // any number
+                    if (lit.empty()) {
+                        tokens.push_back(new LiteralToken(lit));
+                        lit.clear();
+                    }
+                    tokens.push_back(new RepeatToken(0, INFINITE_REPEAT));
+                    break;
+                case '+':  // at least one
+                    if (lit.empty()) {
+                        tokens.push_back(new LiteralToken(lit));
+                        lit.clear();
+                    }
+                    tokens.push_back(new RepeatToken(1, INFINITE_REPEAT));
+                    break;
+                case '\\':
+                    input++;
+                    switch(*input) {
+                        case 'b':
+                            // edge of word
+                            if (lit.empty()) {
+                                tokens.push_back(new LiteralToken(lit));
+                                lit.clear();
+                            }
+                            tokens.push_back(new EdgeToken(IsEdge));
+                            break;
+                        case 'B':
+                            // not edge of word
+                            if (lit.empty()) {
+                                tokens.push_back(new LiteralToken(lit));
+                                lit.clear();
+                            }
+                            tokens.push_back(new EdgeToken(NotEdge));
+                            break;
+                        case '<':
+                            // start of word
+                            if (lit.empty()) {
+                                tokens.push_back(new LiteralToken(lit));
+                                lit.clear();
+                            }
+                            tokens.push_back(new EdgeToken(StartWord));
+                            break;
+                        case '>':
+                            // end of word
+                            if (lit.empty()) {
+                                tokens.push_back(new LiteralToken(lit));
+                                lit.clear();
+                            }
+                            tokens.push_back(new EdgeToken(EndWord));
+                            break;
+                        case 'w':
+                            // alpha or space
+                            if (lit.empty()) {
+                                tokens.push_back(new LiteralToken(lit));
+                                lit.clear();
+                            }
+                            {
+                                stack<char> s;
+                                addDigits(s);
+                                addLower(s);
+                                addUpper(s);
+                                set<char> st;
+                                st.insert(' ');
+                                while (!s.empty()) {
+                                    st.insert(s.top());
+                                    s.pop();
+                                }
+                                tokens.push_back(new CharsetToken(false, st));
+                            }
+                            break;
+                        case 'W':
+                            // not alpha or space
+                            if (lit.empty()) {
+                                tokens.push_back(new LiteralToken(lit));
+                                lit.clear();
+                            }
+                            {
+                                stack<char> s;
+                                addDigits(s);
+                                addLower(s);
+                                addUpper(s);
+                                set<char> st;
+                                st.insert(' ');
+                                while (!s.empty()) {
+                                    st.insert(s.top());
+                                    s.pop();
+                                }
+                                tokens.push_back(new CharsetToken(true, st));
+                            }
+                            break;
+                        case 's':
+                            // space
+                            if (lit.empty()) {
+                                tokens.push_back(new LiteralToken(lit));
+                                lit.clear();
+                            }
+                            {
+                                stack<char> s;
+                                addSpace(s);
+                                set<char> st;
+                                st.insert(' ');
+                                while (!s.empty()) {
+                                    st.insert(s.top());
+                                    s.pop();
+                                }
+                                tokens.push_back(new CharsetToken(false, st));
+                            }
+                            break;
+                        case 'S':
+                            // non space
+                            if (lit.empty()) {
+                                tokens.push_back(new LiteralToken(lit));
+                                lit.clear();
+                            }
+                            {
+                                stack<char> s;
+                                addSpace(s);
+                                set<char> st;
+                                st.insert(' ');
+                                while (!s.empty()) {
+                                    st.insert(s.top());
+                                    s.pop();
+                                }
+                                tokens.push_back(new CharsetToken(true, st));
+                            }
+                            break;
+                        case '*':
+                        case '+':
+                        case '?':
+                        case '{':
+                        case '[':
+                        case '(':
+                        case '}':
+                        case ']':
+                        case ')':
+                        case '|':
+                        case '\\':
+                            lit.push_back(*input);
+                        case '\0':
+                            // ERROR trailing escape
+                            throw syntax_error("Trailing \\");
+                        default:
+                            if (*input > 48 && *input < 58) {
+                                // digit (backref)
+                                unsigned char n = *input - 48;
+                                if (n > maxGroupNum || find(openGroups.begin(), openGroups.end(), n) != openGroups.end()) {
+                                    // ERROR group is currently open
+                                    throw syntax_error("Invalid backref (currently open)");
+                                }
+                                if (lit.empty()) {
+                                    tokens.push_back(new LiteralToken(lit));
+                                    lit.clear();
+                                }
+                                tokens.push_back(new GroupToken(Backref, n));
+                                backrefs->insert(n);
+                                break;
+                            }
+                            // ERROR unknown escape character
+                            throw syntax_error("Unknown escape character");
+                    }
+                    break;
+                default:
+                    lit.push_back(*input);
+                    break;
+            }
+            input++;
         }
-        input++;
-    }
 
-    if (!openGroups.empty()) {
-        // ERROR unmatched (
-        fail = true;
-    }
-    if (fail) {
+        if (!openGroups.empty()) {
+            // ERROR unmatched (
+            throw syntax_error("Unmatched (");
+        }
+        if (lit.empty()) {
+            tokens.push_back(new LiteralToken(lit));
+            lit.clear();
+        }
+        
+        return tokens;
+    } catch (const runtime_error& e) {
         lit.clear();
-        goto fail;
+        backrefs->clear();
+        for (auto el : tokens) {
+            delete el;
+        }
+        throw e;
     }
-    if (lit.empty()) {
-        tokens.push_back(new LiteralToken(lit));
-        lit.clear();
-    }
-    
-    return tokens;
-fail:
-    backrefs->clear();
-    for (auto el : tokens) {
-        delete el;
-    }
-    vector<Token*> r;
-    return r;
 }
 
 CharsetToken* readCharset(const char** strPointer) {
@@ -410,7 +398,7 @@ CharsetToken* readCharset(const char** strPointer) {
 
     if (*input != '[') {
         // ERROR not a characterset
-        return nullptr;
+        throw syntax_error("Not a character set");
     }
     input++;
 
@@ -424,7 +412,7 @@ CharsetToken* readCharset(const char** strPointer) {
     while (*input != ']') {
         if (*input == '\0') {
             // ERROR unmatched [
-            return nullptr;
+            throw syntax_error("Unmatched [");
         }
         if (*input == ':' && !chs.empty() && chs.top() == '[') {
             // named class
@@ -436,7 +424,7 @@ CharsetToken* readCharset(const char** strPointer) {
             while (!(*it == ':' && *(it + 1) == ']')) {
                 if (*it == '\0') {
                     // ERROR unmatched [:
-                    return nullptr;
+                    throw syntax_error("Unmatched [:");
                 }
                 it++;
             }
@@ -499,8 +487,8 @@ CharsetToken* readCharset(const char** strPointer) {
                     chs.push(c);
                 }
             } else {
-                // ERROR named class
-                return nullptr;
+                // ERROR unknown named class
+                throw syntax_error("Unknown named class");
             }
         }
         else if (*input == '-') {
@@ -515,7 +503,7 @@ CharsetToken* readCharset(const char** strPointer) {
             chs.pop();
             if (begin < end) {
                 // ERROR end is before begin
-                return nullptr;
+                throw syntax_error("Range end is before start");
             }
             for (char c = begin; c <= end; c++) {
                 if (c == 127) continue;
@@ -527,7 +515,7 @@ CharsetToken* readCharset(const char** strPointer) {
             // shield against double ranges
             if (*input == '-' && *(input + 1) != ']') {
                 // ERROR [a-b-c] invalid
-                return nullptr;
+                throw syntax_error("Invalid range");
             }
         }
         else {

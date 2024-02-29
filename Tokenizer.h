@@ -8,7 +8,7 @@
 
 /**
  * Returns a vector of tokens, in order from front to back
- * returns an empty vector on failure
+ * throws an exception to indicate failure, includes definition of error
  * Backrefs is an output pointer to a set that will have all used backreferences added to it
  * NOTE: Caller is responsible for freeing all tokens in the vector
 */
