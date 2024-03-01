@@ -3,6 +3,16 @@
 
 using std::string;
 using std::set;
+using std::vector;
+
+set<string> Node::evaluate() {
+    set<Metastring> res(this->interpret());
+    set<string> ret;
+    for (auto& ms : res) {
+        ret.insert(ms.toString());
+    }
+    return ret;
+}
 
 set<Metastring> LiteralNode::interpret() {
     set<Metastring> r;

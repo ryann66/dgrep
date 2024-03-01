@@ -14,6 +14,8 @@ class Node {
  public:
     virtual std::set<Metastring> interpret() = 0;
 
+    std::set<std::string> evaluate();
+
  protected:
     Node() = default;
     Node(const Node&) = default;

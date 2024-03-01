@@ -1,9 +1,10 @@
-Ast::Node add wrapper method for interpret
+Metastring compatibility with set, unsortedset
 Parser (actually write it)
 Main function
 Debug/Testing MVP
 Metastring rewrite to immutable chaining off each other with append
 Ast nodes rewrite better iteration
+Ast nodes use unsortedset in interpret()
 Redo tokenizer character class functions to use set not stack
 Increase usage of exceptions
 Straighten spaghetti
