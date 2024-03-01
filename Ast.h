@@ -2,6 +2,7 @@
 
 #include <set>
 #include <string>
+#include <vector>
 
 #include "Metastring.h"
 #include "Tokens.h"
@@ -135,4 +136,17 @@ class EdgeNode : public InfixNode {
 
  private:
     EdgeType t;
+};
+
+class ConcatNode : public Node {
+ public:
+    ConcatNode(std::vector<Node*> chs) : children(chs) { }
+    ConcatNode(const ConcatNode&) = default;
+    virtual ConcatNode& operator=(const ConcatNode&) = default;
+    virtual ~ConcatNode();
+
+    virtual std::set<Metastring> interpret();
+
+ private:
+    std::vector<Node*> children;
 };

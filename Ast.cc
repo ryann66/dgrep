@@ -187,3 +187,27 @@ set<Metastring> EdgeNode::interpret() {
     }
     return acc;
 }
+
+set<Metastring> ConcatNode::interpret() {
+    if (children.empty()) return set<Metastring>();
+    auto chIter = children.begin();
+    set<Metastring> roots((*chIter)->interpret()), tmp;
+
+    for (chIter++; chIter != children.end(); chIter++) {
+        for (auto& ms : roots) {
+            for (auto& mscat : (*chIter)->interpret()) {
+                try {
+                    tmp.insert(ms + mscat);
+                } catch (truncation_error e) { }     
+            }
+        }
+        roots.swap(tmp);
+        tmp.clear();
+    }
+
+    return roots;
+}
+
+ConcatNode::~ConcatNode() {
+    for (auto p : children) delete p;
+}
