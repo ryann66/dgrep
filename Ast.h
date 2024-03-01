@@ -122,6 +122,9 @@ class OrNode : public InfixNode {
     virtual std::set<Metastring> interpret();
 };
 
+/**
+ * lhs or rhs can be null (but not both)
+*/
 class EdgeNode : public InfixNode {
  public:
     EdgeNode(Node* lhs, Node* rhs, const EdgeToken& token) : InfixNode(lhs, rhs), t(token.edgeType) { }

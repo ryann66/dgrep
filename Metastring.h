@@ -12,6 +12,7 @@ class Metastring {
     */
     Metastring();
     Metastring(const std::string& str);
+    Metastring(char c);
 
     Metastring(const Metastring&);
     Metastring& operator=(const Metastring&);

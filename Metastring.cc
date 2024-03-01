@@ -31,6 +31,16 @@ Metastring::Metastring(const std::string& str) : strlen(str.length()) {
     this->str[strlen] = '\0';
 }
 
+Metastring::Metastring(char c) : strlen(1) {
+    backrefs = (new size_t[maxBackref * 2]) - 1;
+    for (unsigned char i = 1; i <= maxBackref * 2; i++) {
+        backrefs[i] = UNUSED_BACKREF;
+    }
+    str = new char[maxLength];
+    str[0] = c;
+    str[1] = '\0';
+}
+
 Metastring::Metastring(const Metastring& o) : strlen(o.strlen) {
     backrefs = (new size_t[maxBackref * 2]) - 1;
     for (unsigned char i = 1; i <= maxBackref * 2; i++) {
