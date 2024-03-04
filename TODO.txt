@@ -2,6 +2,7 @@ Metastring compatibility with set, unsortedset
 Parser (actually write it)
 Main function
 Debug/Testing MVP
+Implement tokenizer group number reducer for unused backrefs
 Metastring rewrite to immutable chaining off each other with append
 Ast nodes rewrite better iteration
 Ast nodes use unsortedset in interpret()
