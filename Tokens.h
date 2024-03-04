@@ -11,14 +11,10 @@ using std::set;
 /**
  * Literal, Charset are values
  * Repeat is a suffix operator
- * Or, Edge are infix operators
+ * Or is an infix operator
 */
 enum TokenType : char {
-    Literal, Charset, Repeat, Or, OpenGroup, CloseGroup, Backref, Edge
-};
-
-enum EdgeType : char {
-    StartWord, EndWord, IsEdge, NotEdge
+    Literal, Charset, Repeat, Or, OpenGroup, CloseGroup, Backref
 };
 
 /**
@@ -56,13 +52,4 @@ struct GroupToken : public Token {
     unsigned char groupNumber;
 
     GroupToken(TokenType t, unsigned char num) : Token(t), groupNumber(num) { }
-};
-
-/**
- * For \b \B \< \>
-*/
-struct EdgeToken : public Token {
-    EdgeType edgeType;
-
-    EdgeToken(EdgeType et) : Token(Edge), edgeType(et) { }
 };

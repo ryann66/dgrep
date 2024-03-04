@@ -25,6 +25,7 @@ class Node {
 class LiteralNode : public Node {
  public:
     LiteralNode(const LiteralToken& token) : lit(token.lit) { }
+	LiteralNode(const char* str) : lit(str) { }
     LiteralNode(const LiteralNode&) = default;
     virtual LiteralNode& operator=(const LiteralNode&) = default;
 
@@ -76,7 +77,7 @@ class GroupNode : public Node {
 
 class BackrefNode : public Node {
  public:
-    BackrefNode(unsigned char br) : backref(br) { }
+    BackrefNode(unsigned char br, Node* ch) : backref(br), child(ch) { }
     BackrefNode(const BackrefNode&) = default;
     virtual BackrefNode& operator=(const BackrefNode&) = default;
     virtual ~BackrefNode();
@@ -85,44 +86,20 @@ class BackrefNode : public Node {
 
  private:
     unsigned char backref;
+	Node* child;
 };
 
-class InfixNode : public Node {
+class OrNode : public Node {
  public:
-    virtual ~InfixNode();
-
-    virtual std::set<Metastring> interpret() = 0;
-
- protected:
-    InfixNode(Node* lhs, Node* rhs) : ln(lhs), rn(rhs) { }
-    InfixNode(const InfixNode&) = default;
-    virtual InfixNode& operator=(const InfixNode&) = default;
-
-    Node *ln, *rn;
-};
-
-class OrNode : public InfixNode {
- public:
-    OrNode(Node* lhs, Node* rhs) : InfixNode(lhs, rhs) { }
+    OrNode(Node* lhs, Node* rhs) :  { }
     OrNode(const OrNode&) = default;
     virtual OrNode& operator=(const OrNode&) = default;
-
-    virtual std::set<Metastring> interpret();
-};
-
-/**
- * lhs or rhs can be null (but not both)
-*/
-class EdgeNode : public InfixNode {
- public:
-    EdgeNode(Node* lhs, Node* rhs, const EdgeToken& token) : InfixNode(lhs, rhs), t(token.edgeType) { }
-    EdgeNode(const EdgeNode&) = default;
-    virtual EdgeNode& operator=(const EdgeNode&) = default;
+	virtual ~OrNode();
 
     virtual std::set<Metastring> interpret();
 
  private:
-    EdgeType t;
+    Node *ln, *rn;
 };
 
 class ConcatNode : public Node {

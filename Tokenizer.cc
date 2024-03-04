@@ -221,38 +221,6 @@ vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
                 case '\\':
                     input++;
                     switch(*input) {
-                        case 'b':
-                            // edge of word
-                            if (lit.empty()) {
-                                tokens.push_back(new LiteralToken(lit));
-                                lit.clear();
-                            }
-                            tokens.push_back(new EdgeToken(IsEdge));
-                            break;
-                        case 'B':
-                            // not edge of word
-                            if (lit.empty()) {
-                                tokens.push_back(new LiteralToken(lit));
-                                lit.clear();
-                            }
-                            tokens.push_back(new EdgeToken(NotEdge));
-                            break;
-                        case '<':
-                            // start of word
-                            if (lit.empty()) {
-                                tokens.push_back(new LiteralToken(lit));
-                                lit.clear();
-                            }
-                            tokens.push_back(new EdgeToken(StartWord));
-                            break;
-                        case '>':
-                            // end of word
-                            if (lit.empty()) {
-                                tokens.push_back(new LiteralToken(lit));
-                                lit.clear();
-                            }
-                            tokens.push_back(new EdgeToken(EndWord));
-                            break;
                         case 'w':
                             // alpha or space
                             if (lit.empty()) {
