@@ -91,7 +91,7 @@ class BackrefNode : public Node {
 
 class OrNode : public Node {
  public:
-    OrNode(Node* lhs, Node* rhs) :  { }
+    OrNode(Node* lhs, Node* rhs) : ln(lhs), rn(rhs) { }
     OrNode(const OrNode&) = default;
     virtual OrNode& operator=(const OrNode&) = default;
 	virtual ~OrNode();
