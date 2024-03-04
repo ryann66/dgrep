@@ -1,5 +1,4 @@
 Metastring compatibility with set, unsortedset
-Parser (actually write it)
 Main function
 Debug/Testing MVP
 Implement tokenizer group number reducer for unused backrefs
