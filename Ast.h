@@ -60,26 +60,12 @@ class RepeatNode : public Node {
     const RepeatToken& res;
 };
 
-class OpenNode : public Node {
+class GroupNode : public Node {
  public:
-    OpenNode(unsigned char br, Node* ch) : backref(br), child(ch) { }
-    OpenNode(const OpenNode&) = default;
-    virtual OpenNode& operator=(const OpenNode&) = default;
-    virtual ~OpenNode();
-
-    virtual std::set<Metastring> interpret();
-
- private:
-    unsigned char backref;
-    Node* child;
-};
-
-class CloseNode : public Node {
- public:
-    CloseNode(unsigned char br, Node* ch) : backref(br), child(ch) { }
-    CloseNode(const CloseNode&) = default;
-    virtual CloseNode& operator=(const CloseNode&) = default;
-    virtual ~CloseNode();
+    GroupNode(unsigned char br, Node* ch) : backref(br), child(ch) { }
+    GroupNode(const GroupNode&) = default;
+    virtual GroupNode& operator=(const GroupNode&) = default;
+    virtual ~GroupNode();
 
     virtual std::set<Metastring> interpret();
 
@@ -90,7 +76,7 @@ class CloseNode : public Node {
 
 class BackrefNode : public Node {
  public:
-    BackrefNode(unsigned char br, Node* ch) : backref(br), child(ch) { }
+    BackrefNode(unsigned char br) : backref(br) { }
     BackrefNode(const BackrefNode&) = default;
     virtual BackrefNode& operator=(const BackrefNode&) = default;
     virtual ~BackrefNode();
@@ -99,7 +85,6 @@ class BackrefNode : public Node {
 
  private:
     unsigned char backref;
-    Node* child;
 };
 
 class InfixNode : public Node {

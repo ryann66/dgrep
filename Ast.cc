@@ -74,7 +74,7 @@ RepeatNode::~RepeatNode() {
     delete child;
 }
 
-set<Metastring> OpenNode::interpret() {
+set<Metastring> GroupNode::interpret() {
     set<Metastring> ch(child->interpret());
     for (auto& ms : ch) {
         const_cast<Metastring&>(ms).enableBackref(backref);
@@ -82,19 +82,7 @@ set<Metastring> OpenNode::interpret() {
     return ch;
 }
 
-OpenNode::~OpenNode() {
-    delete child;
-}
-
-set<Metastring> CloseNode::interpret() {
-    set<Metastring> ch(child->interpret());
-    for (auto& ms : ch) {
-        const_cast<Metastring&>(ms).disableBackref(backref);
-    }
-    return ch;
-}
-
-CloseNode::~CloseNode() {
+GroupNode::~GroupNode() {
     delete child;
 }
 
