@@ -44,7 +44,7 @@ class CharsetNode : public Node {
     virtual std::set<Metastring> interpret();
 
  private:
-    const CharsetToken& chs;
+    const CharsetToken chs;
 };
 
 class RepeatNode : public Node {
@@ -58,7 +58,7 @@ class RepeatNode : public Node {
 
  private:
     Node* child;
-    const RepeatToken& res;
+    const RepeatToken res;
 };
 
 class GroupNode : public Node {
