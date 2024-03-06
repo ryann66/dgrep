@@ -42,7 +42,7 @@ struct CharsetToken : public Token {
 struct RepeatToken : public Token {
     unsigned int lowerBound, upperBound;
 
-    RepeatToken(unsigned char lBound, unsigned char uBound) : Token(Repeat), lowerBound(lBound), upperBound(uBound) { }
+    RepeatToken(unsigned int lBound, unsigned int uBound) : Token(Repeat), lowerBound(lBound), upperBound(uBound) { }
 };
 
 /**

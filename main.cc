@@ -1,6 +1,10 @@
 #include "Tokens.h"
 #include "Tokenizer.h"
+#include "Parser.h"
+#include "truncation_error.h"
 
-int main(int argc, string* argv) {
+size_t maxLength = 256;
+
+int main(int argc, char** argv) {
     
 }

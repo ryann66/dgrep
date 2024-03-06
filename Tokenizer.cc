@@ -6,6 +6,7 @@
 
 #include "Tokenizer.h"
 #include "syntax_error.h"
+#include "globals.h"
 
 using std::find;
 using std::vector;
@@ -13,6 +14,17 @@ using std::string;
 using std::set;
 using std::stack;
 using std::runtime_error;
+
+/**
+ * initializes the alphabet to be all 'standard' ASCII characters
+ * NOTE: standard ASCII characters are letters, numbers, symbols, and space
+ *       this excludes characters like tab, as well as all control characters
+*/
+set<char> initAlphabet();
+
+set<char> alphabet(initAlphabet());
+
+unsigned char maxBackref = 0;
 
 void addLower(stack<char>& s) {
     for (char c = 'a'; c <= 'z'; c++) {
@@ -48,7 +60,7 @@ void addPunct(stack<char>& s) {
 }
 
 void addSpace(stack<char>& s) {
-    for (char c = '9'; c <= '13'; c++) {
+    for (char c = 9; c <= 13; c++) {
         s.push(c);
     }
     s.push(' ');
@@ -421,7 +433,7 @@ CharsetToken* readCharset(const char** strPointer) {
                 chs.push(' ');
                 chs.push('\t');
             } else if (str == "cntrl") {
-                for (char c = '0'; c <= '31'; c++) {
+                for (char c = 0; c <= 31; c++) {
                     chs.push(c);
                 }
                 chs.push(127);
@@ -502,4 +514,10 @@ CharsetToken* readCharset(const char** strPointer) {
 
     // leave input on trailing ]
     return new CharsetToken(negation, chars);
+}
+
+set<char> initAlphabet() {
+    set<char> alph;
+    for (char c = 32; c < 127; c++) alph.insert(c);
+    return alph;
 }

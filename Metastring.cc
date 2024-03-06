@@ -63,10 +63,15 @@ Metastring& Metastring::operator=(const Metastring& rhs) {
         str[i] = rhs.str[i];
     }
     str[strlen] = '\0';
+    return *this;
+}
+
+bool operator<(const Metastring& lhs, const Metastring& rhs) {
+    return false;
 }
 
 Metastring::~Metastring() {
-    delete (backrefs + 1);
+    delete ++backrefs;
     delete str;
 }
 
@@ -92,6 +97,7 @@ Metastring operator+(const Metastring& lhs, const Metastring rhs) {
             m.backrefs[i] = lhs.backrefs[i];
         }
     }
+    return m;
 }
 
 Metastring& Metastring::operator+=(const Metastring& rhs) {
@@ -110,7 +116,8 @@ Metastring& Metastring::operator+=(const Metastring& rhs) {
         if (rhs.backrefs[i] != UNUSED_BACKREF) {
             backrefs[i] = rhs.backrefs[i];
         }
-    }    
+    }
+    return *this;
 }
 
 string Metastring::toString() const {
@@ -141,4 +148,5 @@ Metastring& Metastring::appendBackref(unsigned char br) {
         str[strlen++] = str[i];
     }
     str[strlen] = '\0';
+    return *this;
 }

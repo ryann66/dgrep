@@ -16,6 +16,7 @@ class Metastring {
 
     Metastring(const Metastring&);
     Metastring& operator=(const Metastring&);
+    friend bool operator<(const Metastring&, const Metastring&);
 
     ~Metastring();
 

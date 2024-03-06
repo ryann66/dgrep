@@ -1,18 +1,15 @@
 #pragma once
 
 #include <set>
+#include <cstddef>
 
 // maximum number backref that will be encountered
-extern unsigned char maxBackref = 0;
+extern unsigned char maxBackref;
 
 // maximum length of matched strings, including null character
-extern size_t maxLength = 256;
+extern size_t maxLength;
 
-const extern std::set<char> alphabet(initAlphabet());
+extern std::set<char> alphabet;
 
-/**
- * initializes the alphabet to be all 'standard' ASCII characters
- * NOTE: standard ASCII characters are letters, numbers, symbols, and space
- *       this excludes characters like tab, as well as all control characters
-*/
-std::set<char> initAlphabet();
+// count of truncation_errors that have been thrown
+extern size_t count;

@@ -17,11 +17,13 @@ set<string> Node::evaluate() {
 set<Metastring> LiteralNode::interpret() {
     set<Metastring> r;
     r.emplace(this->lit);
+    return r;
 }
 
 set<Metastring> CharsetNode::interpret() {
     set<Metastring> r;
     for (char c : chs.chars) r.emplace(c);
+    return r;
 }
 
 set<Metastring> RepeatNode::interpret() {
@@ -110,4 +112,28 @@ set<Metastring> OrNode::interpret() {
 OrNode::~OrNode() {
     delete ln;
     delete rn;
+}
+
+set<Metastring> ConcatNode::interpret() {
+    if (children.empty()) return set<Metastring>();
+    auto iter = children.begin();
+    set<Metastring> result((*iter)->interpret()), tmp;
+    iter++;
+    while (iter != children.end()) {
+        tmp.swap(result);
+        for (Metastring r : (*iter)->interpret()) {
+            for (Metastring l : tmp) {
+                result.insert(l + r);
+            }
+        }
+        tmp.clear();
+        iter++;
+    }
+    return result;
+}
+
+ConcatNode::~ConcatNode() {
+    for (Node* n : children) {
+        delete n;
+    }
 }
