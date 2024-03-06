@@ -79,7 +79,7 @@ RepeatNode::~RepeatNode() {
 set<Metastring> GroupNode::interpret() {
     set<Metastring> ch(child->interpret());
     for (auto& ms : ch) {
-        const_cast<Metastring&>(ms).enableBackref(backref);
+        const_cast<Metastring&>(ms).markBackref(backref);
     }
     return ch;
 }

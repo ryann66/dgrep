@@ -3,7 +3,8 @@
 #include <string>
 
 /**
- * Simplified string variant that is capable of storing backreference metadata
+ * Simplified mutable string variant that is 
+ * capable of storing backreference metadata and appending a reference to that metadata
 */
 class Metastring {
  public:
@@ -38,13 +39,16 @@ class Metastring {
     char lastChar() const;
 
     /**
-     * Toggles logging of backref characters, respectively
+     * Flags the entire contents of this as a backreference
+     * Does nothing if br == 0
     */
-    void enableBackref(unsigned char br);
-    void disableBackref(unsigned char br);
+    void markBackref(unsigned char br);
 
     /**
      * Appends the value of the given backref onto this
+     * Appends the most recent value of the backref, if multiple
+     * Throws an error if there are no backrefs matching br
+     * Does nothing if br == 0
     */
     Metastring& appendBackref(unsigned char br);
     
