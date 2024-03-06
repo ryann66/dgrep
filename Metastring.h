@@ -42,7 +42,7 @@ class Metastring {
      * Flags the entire contents of this as a backreference
      * Does nothing if br == 0
     */
-    void markBackref(unsigned char br);
+    Metastring& markBackref(unsigned char br);
 
     /**
      * Appends the value of the given backref onto this
@@ -53,16 +53,5 @@ class Metastring {
     Metastring& appendBackref(unsigned char br);
     
  private:
-	// invalid constructor
-    Metastring(void*) : str(nullptr), backrefs(((size_t*) nullptr) - 1) { }
 
-    // array of char locations for the start and end of backreferences
-    // NOTE: start values can be accessed with the backref number
-	// NOTE: ends of backrefs can be found by accessing backref number + maxBacckref
-    size_t* backrefs;
-
-    // backing string, maximum length is global.h::maxLength
-    char* str;
-    // length, excluding null char
-    size_t strlen;
 };
