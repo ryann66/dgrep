@@ -3,10 +3,7 @@
 #include <set>
 #include <cstddef>
 
-// maximum number backref that will be encountered
-extern unsigned char maxBackref;
-
-// maximum length of matched strings, including null character
+// maximum length of matched strings
 extern size_t maxLength;
 
 extern std::set<char> alphabet;

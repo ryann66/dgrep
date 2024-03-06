@@ -24,8 +24,6 @@ set<char> initAlphabet();
 
 set<char> alphabet(initAlphabet());
 
-unsigned char maxBackref = 0;
-
 void addLower(stack<char>& s) {
     for (char c = 'a'; c <= 'z'; c++) {
         s.push(c);
