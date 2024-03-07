@@ -1,6 +1,9 @@
 #include "Metastring.h"
+#include "LinkedStringPrivate.h"
 #include "globals.h"
 #include "truncation_error.h"
+
+namespace metastring {
 
 using std::string;
 
@@ -59,3 +62,5 @@ Metastring& Metastring::markBackref(unsigned char br) {
 Metastring& Metastring::appendBackref(unsigned char br) {
     
 }
+
+}  // namespace metastring

@@ -1,6 +1,11 @@
 #pragma once
 
 #include <string>
+#include <memory>
+
+#include "LinkedString.h"
+
+namespace metastring {
 
 /**
  * Simplified mutable string variant that is 
@@ -53,5 +58,7 @@ class Metastring {
     Metastring& appendBackref(unsigned char br);
     
  private:
-
+    std::shared_ptr<LinkedStringNode> str;
 };
+
+}  // namespace metastring

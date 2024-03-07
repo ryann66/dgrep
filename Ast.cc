@@ -5,6 +5,8 @@ using std::string;
 using std::set;
 using std::vector;
 
+using metastring::Metastring;
+
 set<string> Node::evaluate() {
     set<Metastring> res(this->interpret());
     set<string> ret;

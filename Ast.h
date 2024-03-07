@@ -12,7 +12,7 @@
 */
 class Node {
  public:
-    virtual std::set<Metastring> interpret() = 0;
+    virtual std::set<metastring::Metastring> interpret() = 0;
 
     std::set<std::string> evaluate();
 
@@ -29,7 +29,7 @@ class LiteralNode : public Node {
     LiteralNode(const LiteralNode&) = default;
     virtual LiteralNode& operator=(const LiteralNode&) = default;
 
-    virtual std::set<Metastring> interpret();
+    virtual std::set<metastring::Metastring> interpret();
 
  private:
     std::string lit;
@@ -41,7 +41,7 @@ class CharsetNode : public Node {
     CharsetNode(const CharsetNode&) = default;
     virtual CharsetNode& operator=(const CharsetNode&) = default;
 
-    virtual std::set<Metastring> interpret();
+    virtual std::set<metastring::Metastring> interpret();
 
  private:
     const CharsetToken chs;
@@ -54,7 +54,7 @@ class RepeatNode : public Node {
     virtual RepeatNode& operator=(const RepeatNode&) = default;
     virtual ~RepeatNode();
 
-    virtual std::set<Metastring> interpret();
+    virtual std::set<metastring::Metastring> interpret();
 
  private:
     Node* child;
@@ -68,7 +68,7 @@ class GroupNode : public Node {
     virtual GroupNode& operator=(const GroupNode&) = default;
     virtual ~GroupNode();
 
-    virtual std::set<Metastring> interpret();
+    virtual std::set<metastring::Metastring> interpret();
 
  private:
     unsigned char backref;
@@ -82,7 +82,7 @@ class BackrefNode : public Node {
     virtual BackrefNode& operator=(const BackrefNode&) = default;
     virtual ~BackrefNode();
 
-    virtual std::set<Metastring> interpret();
+    virtual std::set<metastring::Metastring> interpret();
 
  private:
     unsigned char backref;
@@ -96,7 +96,7 @@ class OrNode : public Node {
     virtual OrNode& operator=(const OrNode&) = default;
 	virtual ~OrNode();
 
-    virtual std::set<Metastring> interpret();
+    virtual std::set<metastring::Metastring> interpret();
 
  private:
     Node *ln, *rn;
@@ -109,7 +109,7 @@ class ConcatNode : public Node {
     virtual ConcatNode& operator=(const ConcatNode&) = default;
     virtual ~ConcatNode();
 
-    virtual std::set<Metastring> interpret();
+    virtual std::set<metastring::Metastring> interpret();
 
  private:
     std::vector<Node*> children;
