@@ -17,12 +17,13 @@ class Metastring {
     /**
      * Create a metastring with the given backing string
     */
-    Metastring();
-    Metastring(const std::string& str);
-    Metastring(char c);
+    Metastring::Metastring(const std::string& str) : str(new TerminatingLinkedStringNode(str)) { }
+    Metastring::Metastring(char c) : str(new TerminatingLinkedStringNode(c)) { }
 
     Metastring(const Metastring&);
     Metastring& operator=(const Metastring&);
+
+    // deprecated (actually never implemented)
     friend bool operator<(const Metastring&, const Metastring&);
 
     ~Metastring();
@@ -39,10 +40,9 @@ class Metastring {
     friend std::ostream& operator<<(std::ostream&, Metastring);
 
     /**
-     * Return the first or last character, respectively
+     * Returns a string representation
     */
-    char firstChar() const;
-    char lastChar() const;
+    std::string toString() const;
 
     /**
      * Flags the entire contents of this as a backreference
@@ -59,7 +59,9 @@ class Metastring {
     Metastring& appendBackref(unsigned char br);
     
  private:
-    std::shared_ptr<LinkedStringNode> str;
+    Metastring(LinkedStringNode*);
+
+    LinkedStringNode* str;
 };
 
 }  // namespace metastring

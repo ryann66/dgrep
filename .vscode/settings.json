@@ -38,6 +38,19 @@
         "string": "cpp",
         "tuple": "cpp",
         "typeinfo": "cpp",
-        "xstddef": "cpp"
+        "xstddef": "cpp",
+        "system_error": "cpp",
+        "clocale": "cpp",
+        "cmath": "cpp",
+        "ios": "cpp",
+        "iostream": "cpp",
+        "istream": "cpp",
+        "ostream": "cpp",
+        "streambuf": "cpp",
+        "xfacet": "cpp",
+        "xiosbase": "cpp",
+        "xlocale": "cpp",
+        "xlocinfo": "cpp",
+        "xlocnum": "cpp"
     }
 }

@@ -2,9 +2,9 @@ Metastring compatibility with set, unsortedset
 Main function
 Debug/Testing MVP
 Implement tokenizer group number reducer for unused backrefs
-Metastring rewrite to immutable chaining off each other with append
 Ast nodes rewrite better iteration
 Ast nodes use unsortedset in interpret()
 Redo tokenizer character class functions to use set not stack
 Increase usage of exceptions
+Retrofit LinkedString to use all const
 Straighten spaghetti
