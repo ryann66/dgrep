@@ -6,6 +6,7 @@
 namespace metastring {
 
 using std::string;
+using std::ostream;
 
 Metastring::Metastring() {
     
@@ -43,8 +44,8 @@ Metastring& Metastring::operator+=(const Metastring& rhs) {
     
 }
 
-string Metastring::toString() const {
-    
+ostream& operator<<(ostream& os, Metastring ms) {
+
 }
 
 char Metastring::firstChar() const {

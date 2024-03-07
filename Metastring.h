@@ -2,6 +2,7 @@
 
 #include <string>
 #include <memory>
+#include <iostream>
 
 #include "LinkedString.h"
 
@@ -33,9 +34,9 @@ class Metastring {
     Metastring& operator+=(const Metastring& rhs);
 
     /**
-     * Returns the backing string
+     * Prints the metastring to the ostream
     */
-    std::string toString() const;
+    friend std::ostream& operator<<(std::ostream&, Metastring);
 
     /**
      * Return the first or last character, respectively
