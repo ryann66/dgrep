@@ -46,8 +46,11 @@ ostream& operator<<(ostream& os, Metastring ms) {
     return os;
 }
 
-std::string Metastring::toString() const {
-    return str->toString();
+string Metastring::toString() const {
+    string s;
+    s.reserve(str->length());
+    str->toString(s);
+    return s;
 }
 
 Metastring& Metastring::markBackref(unsigned char br) {
