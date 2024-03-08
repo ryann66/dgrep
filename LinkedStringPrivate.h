@@ -12,8 +12,9 @@ namespace metastring {
 */
 class TerminatingLinkedStringNode : public LinkedStringNode {
  public:
-    TerminatingLinkedStringNode(const std::string& str) : bstr(str) { }
-    TerminatingLinkedStringNode(char c) : bstr(1, c) { }
+    TerminatingLinkedStringNode(const std::string& str);
+
+    TerminatingLinkedStringNode(char c);
 
     virtual size_t length() const { return bstr.length(); }
     virtual LinkedStringNode* find(unsigned char br) const;

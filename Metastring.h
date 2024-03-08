@@ -8,6 +8,12 @@
 
 namespace metastring {
 
+class Metastring;
+
+struct MetastringHash {
+   size_t operator()(const Metastring&) const;
+};
+
 /**
  * Simplified mutable string variant that is 
  * capable of storing backreference metadata and appending a reference to that metadata
@@ -17,14 +23,16 @@ class Metastring {
     /**
      * Create a metastring with the given backing string
     */
-    Metastring::Metastring(const std::string& str) : str(new TerminatingLinkedStringNode(str)) { }
-    Metastring::Metastring(char c) : str(new TerminatingLinkedStringNode(c)) { }
+    Metastring(const std::string& str);
+    Metastring(char c);
 
     Metastring(const Metastring&);
     Metastring& operator=(const Metastring&);
 
-    // deprecated (actually never implemented)
+    friend bool operator==(const Metastring&, const Metastring&);
     friend bool operator<(const Metastring&, const Metastring&);
+
+    friend size_t MetastringHash::operator()(const Metastring&) const;
 
     ~Metastring();
 
@@ -37,7 +45,7 @@ class Metastring {
     /**
      * Prints the metastring to the ostream
     */
-    friend std::ostream& operator<<(std::ostream&, Metastring);
+    friend std::ostream& operator<<(std::ostream&, const Metastring&);
 
     /**
      * Returns a string representation

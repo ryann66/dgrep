@@ -41,6 +41,7 @@ class LinkedStringNode {
 
  public:
     size_t refCount;
+    size_t hash;
 };
 
 }  // namespace metastring

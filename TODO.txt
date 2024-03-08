@@ -1,7 +1,8 @@
-Metastring compatibility with set, unsortedset
 Main function
 Debug/Testing MVP
-Implement tokenizer group number reducer for unused backrefs
+Implement Metastring forward iterator (w/ stack)
+Reimplementd Metastring < == to use iterator instead of tostring
+Implement post parser group number reducer for unused backrefs
 Ast nodes rewrite better iteration
 Ast nodes use unsortedset in interpret()
 Redo tokenizer character class functions to use set not stack

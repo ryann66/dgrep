@@ -1,11 +1,29 @@
 #include "LinkedStringPrivate.h"
 
+#define HASH_VALUE (3)
+
+using std::string;
 using std::ostream;
 
+size_t pow(size_t b, size_t e);
+
 namespace metastring {
+
+TerminatingLinkedStringNode::TerminatingLinkedStringNode(const string& str) : bstr(str) {
+    const char* c = str.c_str();
+    hash = 0;
+    while (*c) {
+        hash *= HASH_VALUE;
+        hash += *c;
+        c++;
+    }
+}
+
+TerminatingLinkedStringNode::TerminatingLinkedStringNode(char c) : bstr(1, c) {
+    hash = c;
+}
     
-LinkedStringNode* TerminatingLinkedStringNode::find(unsigned char br) const
-{
+LinkedStringNode* TerminatingLinkedStringNode::find(unsigned char br) const {
     return nullptr;
 }
 
@@ -21,6 +39,7 @@ AppendingLinkedStringNode::AppendingLinkedStringNode(LinkedStringNode* pre, Link
         prefix(pre), suffix(suf), len(pre->length() + suf->length()) {
     prefix->refCount++;
     suffix->refCount++;
+    hash = pow(HASH_VALUE, suffix->length()) * prefix->hash + suffix->hash;
 }
 
 AppendingLinkedStringNode::~AppendingLinkedStringNode() {
@@ -48,11 +67,13 @@ BackrefLinkedStringNode::BackrefLinkedStringNode(LinkedStringNode* prefix, Linke
         prefix(prefix), backref(backref), br(br) {
     prefix->refCount++;
     backref->refCount++;
+    hash = pow(HASH_VALUE, backref->length()) * prefix->hash + backref->hash;
 }
 
 BackrefLinkedStringNode::BackrefLinkedStringNode(LinkedStringNode* backref, unsigned char br) :
         prefix(nullptr), backref(backref), br(br) {
     backref->refCount++;
+    hash = backref->hash;
 }
 
 BackrefLinkedStringNode::~BackrefLinkedStringNode() {
@@ -83,3 +104,9 @@ void BackrefLinkedStringNode::toString(std::string& rstr) const {
 }
 
 }  // namespace metastring
+
+size_t pow(size_t b, size_t e) {
+    size_t r = 1;
+    while (e--) r *= b;
+    return r;
+}
