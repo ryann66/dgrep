@@ -4,9 +4,10 @@
 #include <ostream>
 #include <string>
 #include <stdexcept>
+#include <stack>
 
 namespace metastring {
-
+   
 /**
  * Immutable backing class for Metastring
 */
@@ -33,6 +34,11 @@ class LinkedStringNode {
      * appends this to the string
     */
     virtual void toString(std::string&) const = 0;
+
+    /**
+     * Returns a stack of pointers to the backing strings of the terminating strings
+    */
+    virtual void addTerminating(std::stack<const char*>&) const = 0;
 
  protected:
     LinkedStringNode() : refCount(1) { }

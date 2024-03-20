@@ -10,6 +10,7 @@ namespace metastring {
 using std::string;
 using std::ostream;
 using std::logic_error;
+using std::range_error;
 
 Metastring::Metastring(const std::string& str) : str(new TerminatingLinkedStringNode(str)) { }
 
@@ -29,11 +30,27 @@ Metastring& Metastring::operator=(const Metastring& rhs) {
 bool operator==(const Metastring& lhs, const Metastring& rhs) {
     if (lhs.str == rhs.str) return true;
     if (lhs.str->hash != rhs.str->hash || lhs.str->length() != rhs.str->length()) return false;
-    return lhs.toString() == rhs.toString();
+    Metastring::iterator ri(rhs.begin());
+    for (auto li(lhs.begin()); li != lhs.end(); li++) {
+        if (*li != *ri) return false;
+    }
+    return true;
 }
 
 bool operator<(const Metastring& lhs, const Metastring& rhs) {
-    return lhs.toString() < rhs.toString();
+    Metastring::iterator li(lhs.begin()), ri(rhs.begin()),
+        le(lhs.end()), re(rhs.end());
+    while (li != le && ri != re && *li == *ri) {
+        li++;
+        ri++;
+    }
+    if (ri == re) {
+        return false;
+    }
+    if (li == le) {
+        return true;
+    }
+    return *li < *ri;
 }
 
 Metastring::~Metastring() {
@@ -85,6 +102,60 @@ Metastring::Metastring(LinkedStringNode* s) : str(s) {
 
 size_t MetastringHash::operator()(const Metastring& op) const {
     return op.str->hash;
+}
+
+Metastring::iterator::iterator(const Metastring* p, bool isEnd) : parent(p) {
+    if (isEnd) {
+        curStr = nullptr;
+        return;
+    }
+    parent->str->addTerminating(strings);
+    if (strings.empty()) {
+        curStr = nullptr;
+    } else {
+        curStr = strings.top();
+        strings.pop();
+    }
+}
+
+Metastring::iterator& Metastring::iterator::operator=(const iterator& rhs) {
+    parent = rhs.parent;
+    strings = rhs.strings;
+    curStr = rhs.curStr;
+    return *this;
+}
+
+Metastring::iterator& Metastring::iterator::operator++() {
+    if (curStr == nullptr) throw range_error("Out of bounds");
+    curStr++;
+    if (curStr == nullptr && !strings.empty()) {
+        curStr = strings.top();
+        strings.pop();
+    }
+    return *this;
+}
+
+Metastring::iterator& Metastring::iterator::operator++(int) {
+    return (*this).operator++();
+}
+
+bool Metastring::iterator::operator==(const iterator& other) const {
+    if (this->parent != other.parent) return false;
+    if (this->strings.size() != other.strings.size()) return false;
+    return this->curStr == other.curStr;
+}
+
+Metastring::iterator::reference Metastring::iterator::operator*() const {
+    if (curStr == nullptr) throw range_error("Out of bounds");
+    return *curStr;
+}
+
+Metastring::iterator Metastring::begin() const {
+    return iterator(this, false);
+}
+
+Metastring::iterator Metastring::end() const {
+    return iterator(this, true);
 }
 
 }  // namespace metastring

@@ -3,6 +3,7 @@
 #include <string>
 #include <memory>
 #include <iostream>
+#include <stack>
 
 #include "LinkedString.h"
 
@@ -65,6 +66,39 @@ class Metastring {
      * Does nothing if br == 0
     */
     Metastring& appendBackref(unsigned char br);
+
+    class iterator {
+	 public:
+		using value_type = char;
+		using difference_type = char;
+		using pointer = const char*;
+		using reference = char;
+		using iterator_category = std::forward_iterator_tag;
+
+        // Metastring should be this, bool is a flag param 
+		explicit iterator(const Metastring*, bool isEnd);
+        iterator(const iterator& o) : parent(o.parent), strings(o.strings), curStr(o.curStr) { }
+        iterator& operator=(const iterator&);
+
+        // prefix
+		iterator& operator++();
+        // postfix
+        iterator& operator++(int);
+        bool operator==(const iterator& other) const;
+        bool operator!=(const iterator& other) const { return !(this->operator==(other)); }
+        reference operator*() const;
+
+     private:
+        const Metastring* parent;
+
+        // when advancing, always try to move to next string
+        // curStr == nullptr must be true iff strings.empty()
+        std::stack<const char*> strings;
+        const char* curStr;
+    };
+
+    iterator begin() const;
+    iterator end() const;
     
  private:
     Metastring(LinkedStringNode*);

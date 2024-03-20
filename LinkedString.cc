@@ -4,6 +4,7 @@
 
 using std::string;
 using std::ostream;
+using std::stack;
 
 size_t pow(size_t b, size_t e);
 
@@ -31,8 +32,12 @@ void TerminatingLinkedStringNode::print(ostream& os) const {
     os << bstr;
 }
 
-void TerminatingLinkedStringNode::toString(std::string& rstr) const {
+void TerminatingLinkedStringNode::toString(string& rstr) const {
     rstr.append(bstr);
+}
+
+void TerminatingLinkedStringNode::addTerminating(stack<const char*>& st) const {
+    st.push(bstr.c_str());
 }
 
 AppendingLinkedStringNode::AppendingLinkedStringNode(LinkedStringNode* pre, LinkedStringNode* suf) : 
@@ -58,9 +63,14 @@ void AppendingLinkedStringNode::print(ostream& os) const {
     suffix->print(os);
 }
 
-void AppendingLinkedStringNode::toString(std::string& rstr) const {
+void AppendingLinkedStringNode::toString(string& rstr) const {
     prefix->toString(rstr);
     suffix->toString(rstr);
+}
+
+void AppendingLinkedStringNode::addTerminating(stack<const char*>& st) const {
+    suffix->addTerminating(st);
+    prefix->addTerminating(st);
 }
 
 BackrefLinkedStringNode::BackrefLinkedStringNode(LinkedStringNode* prefix, LinkedStringNode* backref, unsigned char br) :
@@ -98,9 +108,14 @@ void BackrefLinkedStringNode::print(ostream& os) const {
     if (prefix != nullptr) prefix->print(os);
 }
 
-void BackrefLinkedStringNode::toString(std::string& rstr) const {
+void BackrefLinkedStringNode::toString(string& rstr) const {
     backref->toString(rstr);
     if (prefix != nullptr) prefix->toString(rstr);
+}
+
+void BackrefLinkedStringNode::addTerminating(stack<const char*>& st) const {
+    backref->addTerminating(st);
+    if (prefix != nullptr) prefix->addTerminating(st);
 }
 
 }  // namespace metastring

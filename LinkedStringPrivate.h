@@ -20,6 +20,7 @@ class TerminatingLinkedStringNode : public LinkedStringNode {
     virtual LinkedStringNode* find(unsigned char br) const;
     virtual void print(std::ostream&) const;
     virtual void toString(std::string&) const;
+    virtual void addTerminating(std::stack<const char*>&) const;
 
  private:
     std::string bstr;
@@ -38,6 +39,7 @@ class AppendingLinkedStringNode : public LinkedStringNode {
     virtual LinkedStringNode* find(unsigned char br) const;
     virtual void print(std::ostream&) const;
     virtual void toString(std::string&) const;
+    virtual void addTerminating(std::stack<const char*>&) const;
 
  private:
     LinkedStringNode* prefix, *suffix;
@@ -59,6 +61,7 @@ class BackrefLinkedStringNode : public LinkedStringNode {
     virtual LinkedStringNode* find(unsigned char br) const;
     virtual void print(std::ostream&) const;
     virtual void toString(std::string&) const;
+    virtual void addTerminating(std::stack<const char*>&) const;
 
  private:
     LinkedStringNode* prefix, *backref;
