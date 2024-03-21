@@ -1,4 +1,3 @@
-Support for wildcard . character
 Debug/Testing MVP
 Implement post parser group number reducer for unused backrefs
 Ast nodes rewrite better iteration
@@ -8,5 +7,6 @@ CharsetTokens should use iterator - hide internal representation
 Charsets should use pointers to sets, alphabet
 LiteralToken should error if it encounters a character outside of the alphabet
 \w\W\s\S should only add tokens that are in the set and in the alphabet
-Increase usage of exceptions
+Metastring fixed length terminating tokens
+Metastring appending optimizations
 Straighten spaghetti

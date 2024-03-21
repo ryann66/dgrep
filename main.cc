@@ -113,16 +113,13 @@ int main(int argc, char** argv) {
         set<unsigned char> backrefs;
         vector<Token*> tokens(tokenize(regex, &backrefs));
 
-        for (auto t : tokens) {
-            cout << t << endl;
-        }
-        return -1;
-
         // TODO: reduce unused backrefs
+
         Node* root = parseTokens(tokens);
         for (Token* t : tokens) {
             delete t;
         }
+
         set<string> strs(root->evaluate());
         delete root;
         for (string s : strs) {

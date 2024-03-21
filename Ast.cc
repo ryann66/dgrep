@@ -42,7 +42,7 @@ set<Metastring> RepeatNode::interpret() {
         for (auto& ms : iterate) {
             for (auto& tok : toks) {
                 try {
-                    accepted.insert(ms + tok);
+                    resulted.insert(ms + tok);
                 } catch (truncation_error e) { }
             }
         }
@@ -60,7 +60,7 @@ set<Metastring> RepeatNode::interpret() {
         for (auto& ms : iterate) {
             for (auto& tok : toks) {
                 try {
-                    accepted.insert(ms + tok);
+                    resulted.insert(ms + tok);
                 } catch (truncation_error e) { }
             }
         }

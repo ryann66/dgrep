@@ -58,10 +58,12 @@ Metastring::~Metastring() {
 }
 
 Metastring operator+(const Metastring& lhs, const Metastring rhs) {
+    if (lhs.str->length() + rhs.str->length() > maxLength) throw truncation_error("");
     return Metastring(new AppendingLinkedStringNode(lhs.str, rhs.str));
 }
 
 Metastring& Metastring::operator+=(const Metastring& rhs) {
+    if (rhs.str->length() + str->length() > maxLength) throw truncation_error("");
     LinkedStringNode* n = new AppendingLinkedStringNode(str, rhs.str);
     str->refCount--;
     str = n;
@@ -89,6 +91,7 @@ Metastring& Metastring::markBackref(unsigned char br) {
 
 Metastring& Metastring::appendBackref(unsigned char br) {
     LinkedStringNode* b = str->find(br);
+    if (b->length() + str->length() > maxLength) throw truncation_error("");
     if (b == nullptr) throw logic_error("Backref not found");
     LinkedStringNode* n = new BackrefLinkedStringNode(str, b, br);
     str->refCount--;
@@ -113,8 +116,11 @@ Metastring::iterator::iterator(const Metastring* p, bool isEnd) : parent(p) {
     if (strings.empty()) {
         curStr = nullptr;
     } else {
-        curStr = strings.top();
-        strings.pop();
+        do {
+            curStr = strings.top();
+            strings.pop();
+        } while (*curStr == '\0' && !strings.empty());
+        if (*curStr == '\0') curStr = nullptr;
     }
 }
 
@@ -128,10 +134,11 @@ Metastring::iterator& Metastring::iterator::operator=(const iterator& rhs) {
 Metastring::iterator& Metastring::iterator::operator++() {
     if (curStr == nullptr) throw range_error("Out of bounds");
     curStr++;
-    if (curStr == nullptr && !strings.empty()) {
+    while (*curStr == '\0' && !strings.empty()) {
         curStr = strings.top();
         strings.pop();
     }
+    if (*curStr == '\0') curStr = nullptr;
     return *this;
 }
 

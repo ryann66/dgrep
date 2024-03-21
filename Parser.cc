@@ -15,7 +15,9 @@ Node* parse(vector<Token*>::const_iterator begin, vector<Token*>::const_iterator
 
 Node* parseTokens(const vector<Token*>& tokens) {
     if (tokens.empty()) throw syntax_error("Empty regex");
-    return parse(tokens.begin(), tokens.end());
+    Node* root = parse(tokens.begin(), tokens.end());
+    if (root == nullptr) throw syntax_error("Empty regex");
+    return root;
 }
 
 Node* parse(vector<Token*>::const_iterator begin, vector<Token*>::const_iterator end) {
