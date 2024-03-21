@@ -198,7 +198,7 @@ vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
                         tokens.push_back(new LiteralToken(lit));
                         lit.clear();
                     }
-                    tokens.push_back(readCharset(&input));              
+                    tokens.push_back(readCharset(const_cast<char**>(&input)));
                     break;
                 case '|':  // or
                     if (lit.empty()) {
@@ -369,8 +369,8 @@ vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
     }
 }
 
-CharsetToken* readCharset(const char** strPointer) {
-    const char*& input = *strPointer;
+CharsetToken* readCharset(char** strPointer) {
+    const char* input = *strPointer;
     bool negation = false;
     stack<char> chs;
 
