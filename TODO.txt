@@ -5,5 +5,4 @@ Ast nodes rewrite better iteration
 Ast nodes use unsortedset in interpret()
 Redo tokenizer character class functions to use set not stack
 Increase usage of exceptions
-Retrofit LinkedString to use all const
 Straighten spaghetti

@@ -96,7 +96,7 @@ Metastring& Metastring::appendBackref(unsigned char br) {
     return *this;
 }
 
-Metastring::Metastring(LinkedStringNode* s) : str(s) {
+Metastring::Metastring(const LinkedStringNode* s) : str(s) {
     str->refCount++;
 }
 

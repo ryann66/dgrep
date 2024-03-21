@@ -46,7 +46,7 @@ class LinkedStringNode {
     LinkedStringNode& operator=(const LinkedStringNode&) = delete;
 
  public:
-    size_t refCount;
+    mutable size_t refCount;
     size_t hash;
 };
 

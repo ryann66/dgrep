@@ -23,7 +23,7 @@ class TerminatingLinkedStringNode : public LinkedStringNode {
     virtual void addTerminating(std::stack<const char*>&) const;
 
  private:
-    std::string bstr;
+    const std::string bstr;
 };
 
 /**
@@ -32,7 +32,7 @@ class TerminatingLinkedStringNode : public LinkedStringNode {
 */
 class AppendingLinkedStringNode : public LinkedStringNode {
  public:
-    AppendingLinkedStringNode(LinkedStringNode* pre, LinkedStringNode* suf);
+    AppendingLinkedStringNode(const LinkedStringNode* pre, const LinkedStringNode* suf);
     virtual ~AppendingLinkedStringNode();
 
     virtual size_t length() const { return len; }
@@ -42,7 +42,7 @@ class AppendingLinkedStringNode : public LinkedStringNode {
     virtual void addTerminating(std::stack<const char*>&) const;
 
  private:
-    LinkedStringNode* prefix, *suffix;
+    const LinkedStringNode* prefix, *suffix;
     size_t len;
 };
 
@@ -53,8 +53,8 @@ class AppendingLinkedStringNode : public LinkedStringNode {
 class BackrefLinkedStringNode : public LinkedStringNode {
  public:
     // backref is suffix
-    BackrefLinkedStringNode(LinkedStringNode* prefix, LinkedStringNode* backref, unsigned char br);
-    BackrefLinkedStringNode(LinkedStringNode* backref, unsigned char br);
+    BackrefLinkedStringNode(const LinkedStringNode* prefix, const LinkedStringNode* backref, unsigned char br);
+    BackrefLinkedStringNode(const LinkedStringNode* backref, unsigned char br);
     virtual ~BackrefLinkedStringNode();
 
     virtual size_t length() const;
@@ -64,7 +64,7 @@ class BackrefLinkedStringNode : public LinkedStringNode {
     virtual void addTerminating(std::stack<const char*>&) const;
 
  private:
-    LinkedStringNode* prefix, *backref;
+    const LinkedStringNode* prefix, *backref;
     unsigned char br;
 };
 

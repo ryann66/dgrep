@@ -101,9 +101,9 @@ class Metastring {
     iterator end() const;
     
  private:
-    Metastring(LinkedStringNode*);
+    Metastring(const LinkedStringNode*);
 
-    LinkedStringNode* str;
+    const LinkedStringNode* str;
 };
 
 }  // namespace metastring

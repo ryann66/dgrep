@@ -40,7 +40,7 @@ void TerminatingLinkedStringNode::addTerminating(stack<const char*>& st) const {
     st.push(bstr.c_str());
 }
 
-AppendingLinkedStringNode::AppendingLinkedStringNode(LinkedStringNode* pre, LinkedStringNode* suf) : 
+AppendingLinkedStringNode::AppendingLinkedStringNode(const LinkedStringNode* pre, const LinkedStringNode* suf) : 
         prefix(pre), suffix(suf), len(pre->length() + suf->length()) {
     prefix->refCount++;
     suffix->refCount++;
@@ -73,14 +73,14 @@ void AppendingLinkedStringNode::addTerminating(stack<const char*>& st) const {
     prefix->addTerminating(st);
 }
 
-BackrefLinkedStringNode::BackrefLinkedStringNode(LinkedStringNode* prefix, LinkedStringNode* backref, unsigned char br) :
+BackrefLinkedStringNode::BackrefLinkedStringNode(const LinkedStringNode* prefix, const LinkedStringNode* backref, unsigned char br) :
         prefix(prefix), backref(backref), br(br) {
     prefix->refCount++;
     backref->refCount++;
     hash = pow(HASH_VALUE, backref->length()) * prefix->hash + backref->hash;
 }
 
-BackrefLinkedStringNode::BackrefLinkedStringNode(LinkedStringNode* backref, unsigned char br) :
+BackrefLinkedStringNode::BackrefLinkedStringNode(const LinkedStringNode* backref, unsigned char br) :
         prefix(nullptr), backref(backref), br(br) {
     backref->refCount++;
     hash = backref->hash;
