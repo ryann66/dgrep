@@ -8,10 +8,10 @@
 class truncation_error : public std::runtime_error {
  public:
     truncation_error(const char* what) : runtime_error(what) {
-        count++;
+        truncationCount++;
     }
 
     truncation_error(const std::string& what) : runtime_error(what) {
-        count++;
+        truncationCount++;
     }
 };

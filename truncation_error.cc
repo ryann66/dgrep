@@ -1,3 +1,3 @@
 #include "truncation_error.h"
 
-size_t count = 0;
+size_t truncationCount = 0;

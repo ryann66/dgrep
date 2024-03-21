@@ -9,4 +9,4 @@ extern size_t maxLength;
 extern std::set<char> alphabet;
 
 // count of truncation_errors that have been thrown
-extern size_t count;
+extern size_t truncationCount;
