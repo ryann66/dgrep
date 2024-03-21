@@ -205,6 +205,16 @@ vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
                     }
                     tokens.push_back(new Token(Or));
                     break;
+                case '.':  // wildcard
+                    if (!lit.empty()) {
+                        tokens.push_back(new LiteralToken(lit));
+                        lit.clear();
+                    }
+                    {
+                        set<char> s;
+                        tokens.push_back(new CharsetToken(true, s));
+                    }
+                    break;
                 case '?':  // zero or one
                     if (!lit.empty()) {
                         size_t s = lit.size();
@@ -334,6 +344,7 @@ vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
                         case '*':
                         case '+':
                         case '?':
+                        case '.':
                         case '{':
                         case '[':
                         case '(':
@@ -410,6 +421,7 @@ CharsetToken* readCharset(const char** strPointer) {
     else {
         chs.push(*input);
     }
+    input++;
     
     while (*input != ']') {
         if (*input == '\0') {
