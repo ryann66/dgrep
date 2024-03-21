@@ -1,8 +1,12 @@
-Main function
+Support for wildcard . character
 Debug/Testing MVP
 Implement post parser group number reducer for unused backrefs
 Ast nodes rewrite better iteration
 Ast nodes use unsortedset in interpret()
 Redo tokenizer character class functions to use set not stack
+CharsetTokens should use iterator - hide internal representation
+Charsets should use pointers to sets, alphabet
+LiteralToken should error if it encounters a character outside of the alphabet
+\w\W\s\S should only add tokens that are in the set and in the alphabet
 Increase usage of exceptions
 Straighten spaghetti

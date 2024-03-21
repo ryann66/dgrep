@@ -1,7 +1,7 @@
 CC=g++
 CFLAGS=
-DFLAGS=
-BFLAGS=
+DFLAGS=-g -Og
+BFLAGS=-O2
 LFLAGS=
 LIBS=
 OBJS=Ast.o LinkedString.o main.o Metastring.o Parser.o Tokenizer.o Tokens.o truncation_error.o

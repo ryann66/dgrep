@@ -2,6 +2,7 @@
 #include <vector>
 #include <set>
 #include <cerrno>
+#include <stdexcept>
 
 #include "Tokens.h"
 #include "Tokenizer.h"
@@ -11,6 +12,7 @@
 
 size_t maxLength = 256;
 
+using std::runtime_error;
 using std::cout;
 using std::endl;
 using std::vector;
@@ -38,6 +40,10 @@ int main(int argc, char** argv) {
         // option
         switch (argv[i][1]) {
             case 'a':
+                if (alph) {
+                    cout << "Redefining alphabet" << endl;
+                    return EXIT_FAILURE;
+                }
                 try {
                     CharsetToken* newAlph;
                     if (argv[i][2] == '\0') {
@@ -45,18 +51,27 @@ int main(int argc, char** argv) {
                     } else {
                         argv[i] += 2;
                     }
-                    newAlph = readCharset(&argv[i]);
+                    newAlph = readCharset(const_cast<const char**>(&argv[i]));
                     if (argv[i][1] != '\0') {
                         cout << "Poorly formed alphabet" << endl;
                         return EXIT_FAILURE;
                     }
                     alphabet.swap(newAlph->chars);
-                } catch (syntax_error e) {
+                    if (alphabet.empty()) {
+                        cout << "Error: empty alphabet" << endl;
+                        return EXIT_FAILURE;
+                    }
+                } catch (runtime_error e) {
                     cout << "Poorly formed alphabet" << endl;
                     return EXIT_FAILURE;
                 }
+                alph = true;
                 break;
             case 'l':
+                if (len) {
+                    cout << "Redefining max length" << endl;
+                    return EXIT_FAILURE;
+                }
                 if (argv[i][2] == '\0') {
                     i++;
                 } else {
@@ -69,6 +84,7 @@ int main(int argc, char** argv) {
                     cout << "Poorly formatted length" << endl;
                     return EXIT_FAILURE;
                 }
+                len = true;
                 break;
             case 'r':
                 if (argv[i][2] == '\0') {
@@ -96,13 +112,23 @@ int main(int argc, char** argv) {
         string regex(argv[i]);
         set<unsigned char> backrefs;
         vector<Token*> tokens(tokenize(regex, &backrefs));
+
+        for (auto t : tokens) {
+            cout << t << endl;
+        }
+        return -1;
+
         // TODO: reduce unused backrefs
         Node* root = parseTokens(tokens);
+        for (Token* t : tokens) {
+            delete t;
+        }
         set<string> strs(root->evaluate());
+        delete root;
         for (string s : strs) {
             cout << s << endl;
         }
-    } catch (syntax_error e) {
+    } catch (runtime_error e) {
         cout << "Error: " << e.what() << endl;
         return EXIT_FAILURE;
     }

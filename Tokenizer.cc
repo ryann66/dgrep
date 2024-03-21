@@ -74,7 +74,7 @@ vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
         while (*input) {
             switch(*input) {
                 case '(':  // open
-                    if (lit.empty()) {
+                    if (!lit.empty()) {
                         tokens.push_back(new LiteralToken(lit));
                         lit.clear();
                     }
@@ -86,7 +86,7 @@ vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
                         // ERROR unmatched )
                         throw syntax_error("Unmatched )");
                     }
-                    if (lit.empty()) {
+                    if (!lit.empty()) {
                         tokens.push_back(new LiteralToken(lit));
                         lit.clear();
                     }
@@ -94,11 +94,25 @@ vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
                     openGroups.pop_back();
                     break;
                 case '{':  // arb repeat start
+                    if (!lit.empty()) {
+                        size_t s = lit.size();
+                        if (s > 1) {
+                            char c = lit[s-1];
+                            lit.erase(s-1, 1);
+                            tokens.push_back(new LiteralToken(lit));
+                            tokens.push_back(new LiteralToken(c));
+                        }
+                        else {
+                            tokens.push_back(new LiteralToken(lit));
+                        }
+                        lit.clear();
+                    }
                     input++;
                     // either number or comma
                     long num;
                     // {,num}
                     if (*input == ',') {
+                        input++;
                         num = strtol(input, const_cast<char**>(&input), 10);
                         if (num == 0 && errno == EINVAL) {
                             // ERROR {, must be followed by a number
@@ -115,10 +129,6 @@ vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
                         if (*input != '}') {
                             // ERROR expected }
                             throw syntax_error("} expected");
-                        }
-                        if (lit.empty()) {
-                            tokens.push_back(new LiteralToken(lit));
-                            lit.clear();
                         }
                         tokens.push_back(new RepeatToken(0, num));
                         break;
@@ -139,10 +149,6 @@ vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
                     }
                     // {num}
                     if (*input == '}') {
-                        if (lit.empty()) {
-                            tokens.push_back(new LiteralToken(lit));
-                            lit.clear();
-                        }
                         tokens.push_back(new RepeatToken(num, num));
                         break;
                     }
@@ -150,10 +156,6 @@ vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
                         input++;
                         // {num,}
                         if (*input == '}') {
-                            if (lit.empty()) {
-                                tokens.push_back(new LiteralToken(lit));
-                                lit.clear();
-                            }
                             tokens.push_back(new RepeatToken(num, INFINITE_REPEAT));
                             break;
                         }
@@ -177,10 +179,6 @@ vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
                             throw syntax_error("First argument exceeds second argument");
                         }
                         if (*input == '}') {
-                            if (lit.empty()) {
-                                tokens.push_back(new LiteralToken(lit));
-                                lit.clear();
-                            }
                             tokens.push_back(new RepeatToken(num, num2));
                             break;
                         }
@@ -194,36 +192,63 @@ vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
                     input--;
                     break;
                 case '[':  // charset start
-                    if (lit.empty()) {
+                    if (!lit.empty()) {
                         tokens.push_back(new LiteralToken(lit));
                         lit.clear();
                     }
-                    tokens.push_back(readCharset(const_cast<char**>(&input)));
+                    tokens.push_back(readCharset(&input));
                     break;
                 case '|':  // or
-                    if (lit.empty()) {
+                    if (!lit.empty()) {
                         tokens.push_back(new LiteralToken(lit));
                         lit.clear();
                     }
                     tokens.push_back(new Token(Or));
                     break;
                 case '?':  // zero or one
-                    if (lit.empty()) {
-                        tokens.push_back(new LiteralToken(lit));
+                    if (!lit.empty()) {
+                        size_t s = lit.size();
+                        if (s > 1) {
+                            char c = lit[s-1];
+                            lit.erase(s-1, 1);
+                            tokens.push_back(new LiteralToken(lit));
+                            tokens.push_back(new LiteralToken(c));
+                        }
+                        else {
+                            tokens.push_back(new LiteralToken(lit));
+                        }
                         lit.clear();
                     }
                     tokens.push_back(new RepeatToken(0, 1));
                     break;
                 case '*':  // any number
-                    if (lit.empty()) {
-                        tokens.push_back(new LiteralToken(lit));
+                    if (!lit.empty()) {
+                        size_t s = lit.size();
+                        if (s > 1) {
+                            char c = lit[s-1];
+                            lit.erase(s-1, 1);
+                            tokens.push_back(new LiteralToken(lit));
+                            tokens.push_back(new LiteralToken(c));
+                        }
+                        else {
+                            tokens.push_back(new LiteralToken(lit));
+                        }
                         lit.clear();
                     }
                     tokens.push_back(new RepeatToken(0, INFINITE_REPEAT));
                     break;
                 case '+':  // at least one
-                    if (lit.empty()) {
-                        tokens.push_back(new LiteralToken(lit));
+                    if (!lit.empty()) {
+                        size_t s = lit.size();
+                        if (s > 1) {
+                            char c = lit[s-1];
+                            lit.erase(s-1, 1);
+                            tokens.push_back(new LiteralToken(lit));
+                            tokens.push_back(new LiteralToken(c));
+                        }
+                        else {
+                            tokens.push_back(new LiteralToken(lit));
+                        }
                         lit.clear();
                     }
                     tokens.push_back(new RepeatToken(1, INFINITE_REPEAT));
@@ -233,7 +258,7 @@ vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
                     switch(*input) {
                         case 'w':
                             // alpha or space
-                            if (lit.empty()) {
+                            if (!lit.empty()) {
                                 tokens.push_back(new LiteralToken(lit));
                                 lit.clear();
                             }
@@ -253,7 +278,7 @@ vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
                             break;
                         case 'W':
                             // not alpha or space
-                            if (lit.empty()) {
+                            if (!lit.empty()) {
                                 tokens.push_back(new LiteralToken(lit));
                                 lit.clear();
                             }
@@ -273,7 +298,7 @@ vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
                             break;
                         case 's':
                             // space
-                            if (lit.empty()) {
+                            if (!lit.empty()) {
                                 tokens.push_back(new LiteralToken(lit));
                                 lit.clear();
                             }
@@ -281,7 +306,6 @@ vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
                                 stack<char> s;
                                 addSpace(s);
                                 set<char> st;
-                                st.insert(' ');
                                 while (!s.empty()) {
                                     st.insert(s.top());
                                     s.pop();
@@ -291,7 +315,7 @@ vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
                             break;
                         case 'S':
                             // non space
-                            if (lit.empty()) {
+                            if (!lit.empty()) {
                                 tokens.push_back(new LiteralToken(lit));
                                 lit.clear();
                             }
@@ -330,7 +354,7 @@ vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
                                     // ERROR group is currently open
                                     throw syntax_error("Invalid backref (currently open)");
                                 }
-                                if (lit.empty()) {
+                                if (!lit.empty()) {
                                     tokens.push_back(new LiteralToken(lit));
                                     lit.clear();
                                 }
@@ -353,13 +377,13 @@ vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
             // ERROR unmatched (
             throw syntax_error("Unmatched (");
         }
-        if (lit.empty()) {
+        if (!lit.empty()) {
             tokens.push_back(new LiteralToken(lit));
             lit.clear();
         }
         
         return tokens;
-    } catch (const runtime_error& e) {
+    } catch (runtime_error e) {
         lit.clear();
         backrefs->clear();
         for (auto el : tokens) {
@@ -369,7 +393,7 @@ vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
     }
 }
 
-CharsetToken* readCharset(char** strPointer) {
+CharsetToken* readCharset(const char** strPointer) {
     const char* input = *strPointer;
     bool negation = false;
     stack<char> chs;
@@ -468,6 +492,7 @@ CharsetToken* readCharset(char** strPointer) {
                 // ERROR unknown named class
                 throw syntax_error("Unknown named class");
             }
+            input++;
         }
         else if (*input == '-') {
             // range
@@ -479,7 +504,7 @@ CharsetToken* readCharset(char** strPointer) {
 
             char begin = chs.top(), end = *input;
             chs.pop();
-            if (begin < end) {
+            if (begin > end) {
                 // ERROR end is before begin
                 throw syntax_error("Range end is before start");
             }
@@ -511,6 +536,8 @@ CharsetToken* readCharset(char** strPointer) {
     }
 
     // leave input on trailing ]
+    *strPointer = input;
+
     return new CharsetToken(negation, chars);
 }
 
