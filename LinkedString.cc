@@ -24,7 +24,7 @@ TerminatingLinkedStringNode::TerminatingLinkedStringNode(char c) : bstr(1, c) {
     hash = c;
 }
     
-LinkedStringNode* TerminatingLinkedStringNode::find(unsigned char br) const {
+const LinkedStringNode* TerminatingLinkedStringNode::find(unsigned char br) const {
     return nullptr;
 }
 
@@ -52,8 +52,8 @@ AppendingLinkedStringNode::~AppendingLinkedStringNode() {
     if (--suffix->refCount == 0) delete suffix;
 }
 
-LinkedStringNode* AppendingLinkedStringNode::find(unsigned char br) const {
-    LinkedStringNode* b = suffix->find(br);
+const LinkedStringNode* AppendingLinkedStringNode::find(unsigned char br) const {
+    const LinkedStringNode* b = suffix->find(br);
     if (b != nullptr) return b;
     return prefix->find(br);
 }
@@ -92,30 +92,30 @@ BackrefLinkedStringNode::~BackrefLinkedStringNode() {
 }
 
 size_t BackrefLinkedStringNode::length() const {
-    return prefix->length() + backref->length();
+    return backref->length() + (prefix != nullptr ? prefix->length() : 0);
 }
 
-LinkedStringNode* BackrefLinkedStringNode::find(unsigned char br) const {
-    if (br == this->br) return static_cast<LinkedStringNode*>(const_cast<BackrefLinkedStringNode*>(this));
-    LinkedStringNode* b = backref->find(br);
+const LinkedStringNode* BackrefLinkedStringNode::find(unsigned char br) const {
+    if (br == this->br) return this->backref;
+    const LinkedStringNode* b = backref->find(br);
     if (b != nullptr) return b;
     if (prefix == nullptr) return nullptr;
     return prefix->find(br);
 }
 
 void BackrefLinkedStringNode::print(ostream& os) const {
-    backref->print(os);
     if (prefix != nullptr) prefix->print(os);
+    backref->print(os);
 }
 
 void BackrefLinkedStringNode::toString(string& rstr) const {
-    backref->toString(rstr);
     if (prefix != nullptr) prefix->toString(rstr);
+    backref->toString(rstr);
 }
 
 void BackrefLinkedStringNode::addTerminating(stack<const char*>& st) const {
-    backref->addTerminating(st);
     if (prefix != nullptr) prefix->addTerminating(st);
+    backref->addTerminating(st);
 }
 
 }  // namespace metastring

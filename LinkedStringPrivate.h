@@ -17,7 +17,7 @@ class TerminatingLinkedStringNode : public LinkedStringNode {
     TerminatingLinkedStringNode(char c);
 
     virtual size_t length() const { return bstr.length(); }
-    virtual LinkedStringNode* find(unsigned char br) const;
+    virtual const LinkedStringNode* find(unsigned char br) const;
     virtual void print(std::ostream&) const;
     virtual void toString(std::string&) const;
     virtual void addTerminating(std::stack<const char*>&) const;
@@ -36,7 +36,7 @@ class AppendingLinkedStringNode : public LinkedStringNode {
     virtual ~AppendingLinkedStringNode();
 
     virtual size_t length() const { return len; }
-    virtual LinkedStringNode* find(unsigned char br) const;
+    virtual const LinkedStringNode* find(unsigned char br) const;
     virtual void print(std::ostream&) const;
     virtual void toString(std::string&) const;
     virtual void addTerminating(std::stack<const char*>&) const;
@@ -58,7 +58,7 @@ class BackrefLinkedStringNode : public LinkedStringNode {
     virtual ~BackrefLinkedStringNode();
 
     virtual size_t length() const;
-    virtual LinkedStringNode* find(unsigned char br) const;
+    virtual const LinkedStringNode* find(unsigned char br) const;
     virtual void print(std::ostream&) const;
     virtual void toString(std::string&) const;
     virtual void addTerminating(std::stack<const char*>&) const;

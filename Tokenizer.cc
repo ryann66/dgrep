@@ -354,6 +354,7 @@ vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
                         case '|':
                         case '\\':
                             lit.push_back(*input);
+                            break;
                         case '\0':
                             // ERROR trailing escape
                             throw syntax_error("Trailing \\");

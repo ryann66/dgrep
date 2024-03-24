@@ -90,7 +90,7 @@ Metastring& Metastring::markBackref(unsigned char br) {
 }
 
 Metastring& Metastring::appendBackref(unsigned char br) {
-    LinkedStringNode* b = str->find(br);
+    const LinkedStringNode* b = str->find(br);
     if (b->length() + str->length() > maxLength) throw truncation_error("");
     if (b == nullptr) throw logic_error("Backref not found");
     LinkedStringNode* n = new BackrefLinkedStringNode(str, b, br);

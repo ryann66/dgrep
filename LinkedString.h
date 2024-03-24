@@ -23,7 +23,7 @@ class LinkedStringNode {
     /**
      * Returns a pointer to the given backref, or a null pointer if the backref does not exist
     */
-    virtual LinkedStringNode* find(unsigned char br) const = 0;
+    virtual const LinkedStringNode* find(unsigned char br) const = 0;
 
     /**
      * Prints this to the ostream
