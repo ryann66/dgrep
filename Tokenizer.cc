@@ -58,9 +58,9 @@ void addPunct(stack<char>& s) {
 }
 
 void addSpace(stack<char>& s) {
-    for (char c = 9; c <= 13; c++) {
+    /*for (char c = 9; c <= 13; c++) {
         s.push(c);
-    }
+    }*/
     s.push(' ');
 }
 
@@ -333,7 +333,6 @@ vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
                                 stack<char> s;
                                 addSpace(s);
                                 set<char> st;
-                                st.insert(' ');
                                 while (!s.empty()) {
                                     st.insert(s.top());
                                     s.pop();
@@ -466,13 +465,13 @@ CharsetToken* readCharset(const char** strPointer) {
                 addUpper(chs);
             } else if (str == "blank") {
                 chs.push(' ');
-                chs.push('\t');
-            } else if (str == "cntrl") {
+                //chs.push('\t');
+            } /*else if (str == "cntrl") {
                 for (char c = 0; c <= 31; c++) {
                     chs.push(c);
                 }
                 chs.push(127);
-            } else if (str == "digit") {
+            }*/ else if (str == "digit") {
                 addDigits(chs);
             } else if (str == "graph") {
                 addLower(chs);
