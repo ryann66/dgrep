@@ -278,7 +278,7 @@ vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
                                 addLower(s);
                                 addUpper(s);
                                 set<char> st;
-                                st.insert(' ');
+                                st.insert('_');
                                 while (!s.empty()) {
                                     st.insert(s.top());
                                     s.pop();
@@ -298,7 +298,7 @@ vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
                                 addLower(s);
                                 addUpper(s);
                                 set<char> st;
-                                st.insert(' ');
+                                st.insert('_');
                                 while (!s.empty()) {
                                     st.insert(s.top());
                                     s.pop();
