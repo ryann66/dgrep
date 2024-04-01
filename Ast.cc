@@ -91,18 +91,9 @@ GroupNode::~GroupNode() {
 }
 
 set<Metastring> BackrefNode::interpret() {
-    set<Metastring> ch(child->interpret());
     set<Metastring> rs;
-    for (auto& ms : ch) {
-        try {
-            rs.insert(const_cast<Metastring&>(ms).appendBackref(backref));
-        } catch (truncation_error e) { }
-    }
+    rs.emplace(backref);
     return rs;
-}
-
-BackrefNode::~BackrefNode() {
-    delete child;
 }
 
 set<Metastring> OrNode::interpret() {

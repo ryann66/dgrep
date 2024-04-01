@@ -77,16 +77,14 @@ class GroupNode : public Node {
 
 class BackrefNode : public Node {
  public:
-    BackrefNode(unsigned char br, Node* ch) : backref(br), child(ch) { }
+    BackrefNode(unsigned char br) : backref(br) { }
     BackrefNode(const BackrefNode&) = default;
     virtual BackrefNode& operator=(const BackrefNode&) = default;
-    virtual ~BackrefNode();
 
     virtual std::set<metastring::Metastring> interpret();
 
  private:
     unsigned char backref;
-	Node* child;
 };
 
 class OrNode : public Node {

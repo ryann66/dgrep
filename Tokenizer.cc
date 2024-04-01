@@ -352,6 +352,9 @@ vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
                         case ')':
                         case '|':
                         case '\\':
+                        // grep compat (allow escaping of noncontrol characters)
+                        case '^':
+                        case '$':
                             lit.push_back(*input);
                             break;
                         case '\0':

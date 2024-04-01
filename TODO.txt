@@ -1,3 +1,4 @@
+Reimplement Metastring to support not yet defined backrefs
 Debug/Testing MVP
 Implement post parser group number reducer for unused backrefs
 Ast nodes rewrite better iteration

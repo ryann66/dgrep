@@ -27,6 +27,11 @@ class Metastring {
     Metastring(const std::string& str);
     Metastring(char c);
 
+    /**
+     * Create a metastring with an unresolved backref
+    */
+    Metastring(unsigned char br);
+
     Metastring(const Metastring&);
     Metastring& operator=(const Metastring&);
 
@@ -58,14 +63,6 @@ class Metastring {
      * Does nothing if br == 0
     */
     Metastring& markBackref(unsigned char br);
-
-    /**
-     * Appends the value of the given backref onto this
-     * Appends the most recent value of the backref, if multiple
-     * Throws an error if there are no backrefs matching br
-     * Does nothing if br == 0
-    */
-    Metastring& appendBackref(unsigned char br);
 
     class iterator {
 	 public:

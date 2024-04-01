@@ -22,7 +22,12 @@ a-c,2,[^a-b]
 a-e,2,[^a-bc-d]
 a-zA-Z0-9,1,[[:alpha:]]
 a-zA-Z0-9.?+,1,[[:alnum:]]
+[:print:],1,[a^]
+[:print:],1,[a-]
+[:print:],1,[-a]
 [:print:],1,\s
 [:print:],1,\S
 [:print:],1,\w
 [:print:],1,\W
+abc,3,(.)\1
+abc,3,(.)\1{2}

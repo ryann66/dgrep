@@ -16,6 +16,8 @@ Metastring::Metastring(const std::string& str) : str(new TerminatingLinkedString
 
 Metastring::Metastring(char c) : str(new TerminatingLinkedStringNode(c)) { }
 
+Metastring::Metastring(unsigned char c) : str(new TerminatingLinkedStringNode("\\" + string(1, c+48))) { }
+
 Metastring::Metastring(const Metastring& o) : str(o.str) {
     str->refCount++;
 }
@@ -86,16 +88,6 @@ Metastring& Metastring::markBackref(unsigned char br) {
     LinkedStringNode* b = new BackrefLinkedStringNode(str, br);
     str->refCount--;
     str = b;
-    return *this;
-}
-
-Metastring& Metastring::appendBackref(unsigned char br) {
-    const LinkedStringNode* b = str->find(br);
-    if (b->length() + str->length() > maxLength) throw truncation_error("");
-    if (b == nullptr) throw logic_error("Backref not found");
-    LinkedStringNode* n = new BackrefLinkedStringNode(str, b, br);
-    str->refCount--;
-    str = n;
     return *this;
 }
 

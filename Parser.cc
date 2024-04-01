@@ -54,11 +54,8 @@ Node* parse(vector<Token*>::const_iterator begin, vector<Token*>::const_iterator
             case CloseGroup:
                 throw syntax_error("Unmatched closegroup");
             case Backref:{
-                if (result.empty()) throw syntax_error("Leading backref");
                 unsigned char grn = static_cast<GroupToken*>(*begin)->groupNumber;
-                Node* child = result.size() == 1 ? result[0] : new ConcatNode(result);
-                result.clear();
-                result.push_back(new BackrefNode(grn, child));
+                result.push_back(new BackrefNode(grn));
                 break;}
         }
         begin++;
