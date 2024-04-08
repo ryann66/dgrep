@@ -5,8 +5,6 @@
 #include <iostream>
 #include <stack>
 
-#include "LinkedString.h"
-
 namespace metastring {
 
 class Metastring;
@@ -27,26 +25,24 @@ class Metastring {
     Metastring(const std::string& str);
     Metastring(char c);
 
-    /**
-     * Create a metastring with an unresolved backref
-    */
-    Metastring(unsigned char br);
-
     Metastring(const Metastring&);
     Metastring& operator=(const Metastring&);
+    ~Metastring();
 
     friend bool operator==(const Metastring&, const Metastring&);
     friend bool operator<(const Metastring&, const Metastring&);
-
     friend size_t MetastringHash::operator()(const Metastring&) const;
 
-    ~Metastring();
+    /**
+     * Returns a new metastring with the given character or string appended
+    */
+    friend Metastring operator+(const Metastring&, char);
+    friend Metastring operator+(const Metastring&, const std::string&);
 
     /**
-     * Concats, if conflicts encountered in metadata, the latter's will be preserved
+     * Appends the given backreference onto this
     */
-    friend Metastring operator+(const Metastring& lhs, const Metastring rhs);
-    Metastring& operator+=(const Metastring& rhs);
+    Metastring& appendBackref(unsigned char);
 
     /**
      * Prints the metastring to the ostream
@@ -54,53 +50,19 @@ class Metastring {
     friend std::ostream& operator<<(std::ostream&, const Metastring&);
 
     /**
-     * Returns a string representation
+     * Returns a string representation without metadata
     */
     std::string toString() const;
 
     /**
-     * Flags the entire contents of this as a backreference
+     * Enables or disables logging appended characters/strings as backrefs
      * Does nothing if br == 0
     */
-    Metastring& markBackref(unsigned char br);
-
-    class iterator {
-	 public:
-		using value_type = char;
-		using difference_type = char;
-		using pointer = const char*;
-		using reference = char;
-		using iterator_category = std::forward_iterator_tag;
-
-        // Metastring should be this, bool is a flag param 
-		explicit iterator(const Metastring*, bool isEnd);
-        iterator(const iterator& o) : parent(o.parent), strings(o.strings), curStr(o.curStr) { }
-        iterator& operator=(const iterator&);
-
-        // prefix
-		iterator& operator++();
-        // postfix
-        iterator& operator++(int);
-        bool operator==(const iterator& other) const;
-        bool operator!=(const iterator& other) const { return !(this->operator==(other)); }
-        reference operator*() const;
-
-     private:
-        const Metastring* parent;
-
-        // when advancing, always try to move to next string
-        // curStr == nullptr must be true iff strings.empty()
-        std::stack<const char*> strings;
-        const char* curStr;
-    };
-
-    iterator begin() const;
-    iterator end() const;
+    Metastring& startBackrefLogging(unsigned char br);
+    Metastring& endBackrefLogging(unsigned char br);
     
  private:
-    Metastring(const LinkedStringNode*);
 
-    const LinkedStringNode* str;
 };
 
 }  // namespace metastring

@@ -11,4 +11,4 @@
  * NOTE: client is responsible for freeing the returned syntax tree
  * NODE: client maintains ownership of all the tokens
 */
-Node* parseTokens(const std::vector<Token*>& tokens);
+Node* parseTokensToAST(const std::vector<Token*>& tokens);

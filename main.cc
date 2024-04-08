@@ -136,16 +136,15 @@ int main(int argc, char** argv) {
 
         // TODO: reduce unused backrefs
 
-        Node* root = parseTokens(tokens);
+        Node* root = parseTokensToAST(tokens);
         for (Token* t : tokens) {
             delete t;
         }
+        
+        // TODO: parse ast into nfa
 
-        set<string> strs(root->evaluate());
-        delete root;
-        for (string s : strs) {
-            cout << s << endl;
-        }
+        // TODO: evaluate nfa
+
     } catch (runtime_error e) {
         cout << "Error: " << e.what() << endl;
         return EXIT_FAILURE;

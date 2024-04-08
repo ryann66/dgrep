@@ -13,7 +13,7 @@ using std::find_if;
 */
 Node* parse(vector<Token*>::const_iterator begin, vector<Token*>::const_iterator end);
 
-Node* parseTokens(const vector<Token*>& tokens) {
+Node* parseTokensToAST(const vector<Token*>& tokens) {
     if (tokens.empty()) throw syntax_error("Empty regex");
     Node* root = parse(tokens.begin(), tokens.end());
     if (root == nullptr) throw syntax_error("Empty regex");

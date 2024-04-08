@@ -1,13 +1,12 @@
-Reimplement Metastring to support not yet defined backrefs
+Implement graph, module for NFA
+Implement AST->NFA parser
+Implement Metastring
 Debug/Testing MVP
 Implement post parser group number reducer for unused backrefs
-Ast nodes rewrite better iteration
-Ast nodes use unsortedset in interpret()
 Redo tokenizer character class functions to use set not stack
-CharsetTokens should use iterator - hide internal representation
-Charsets should use pointers to sets, alphabet
+Implement new encapsulated alphabet class
+CharsetTokens should use alphabet class
 LiteralToken should error if it encounters a character outside of the alphabet
 \w\W\s\S should only add tokens that are in the set and in the alphabet
-Metastring fixed length terminating tokens
 Metastring appending optimizations
 Straighten spaghetti
