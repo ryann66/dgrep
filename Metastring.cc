@@ -67,6 +67,7 @@ bool operator<(const Metastring& lhs, const Metastring& rhs) {
 }
 
 Metastring operator+(const Metastring& lhs, char rhs) {
+    if (lhs.strlen == maxLength) throw new truncation_error();
     Metastring m;
     m.str = new char[lhs.strlen + 2];
     strcpy(m.str, lhs.str);
@@ -79,12 +80,14 @@ Metastring operator+(const Metastring& lhs, char rhs) {
 }
 
 Metastring operator+(const Metastring& lhs, const string& rhs) {
+    size_t rlen = rhs.length();
+    if (lhs.strlen + rlen > maxLength) throw new truncation_error();
     Metastring m;
-    m.str = new char[lhs.strlen + rhs.length() + 1];
+    m.str = new char[lhs.strlen + rlen + 1];
     strcpy(m.str, lhs.str);
     char* end = m.str + lhs.strlen;
     strcpy(end, rhs.c_str());
-    m.strlen = lhs.strlen + rhs.length();
+    m.strlen = lhs.strlen + rlen;
     m.backrefs = lhs.backrefs;
     return m;
 }
@@ -96,6 +99,7 @@ Metastring& Metastring::appendBackref(unsigned char br) {
     const char* start = (*iter).second.first, *end = (*iter).second.second;
     if (end == nullptr) throw logic_error("Open backref");
     size_t len = end - start;
+    if (strlen + len > maxLength) throw new truncation_error();
     char* dst = new char[strlen + len + 1];
     strcpy(dst, str);
     dst += strlen;
