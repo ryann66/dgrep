@@ -19,6 +19,7 @@ class Node {
     Node(const Node&) = default;
     virtual Node& operator=(const Node&) = default;
 
+ public:
 	virtual nfa::Module buildModule() const = 0;
 };
 
@@ -29,6 +30,7 @@ class LiteralNode : public Node {
     LiteralNode(const LiteralNode&) = default;
     virtual LiteralNode& operator=(const LiteralNode&) = default;
 
+ public:
 	virtual nfa::Module buildModule() const;
 
  private:
@@ -41,6 +43,7 @@ class CharsetNode : public Node {
     CharsetNode(const CharsetNode&) = default;
     virtual CharsetNode& operator=(const CharsetNode&) = default;
 
+ public:
 	virtual nfa::Module buildModule() const;
 
  private:
@@ -54,6 +57,7 @@ class RepeatNode : public Node {
     virtual RepeatNode& operator=(const RepeatNode&) = default;
     virtual ~RepeatNode();
 
+ public:
 	virtual nfa::Module buildModule() const;
 
  private:
@@ -68,6 +72,7 @@ class GroupNode : public Node {
     virtual GroupNode& operator=(const GroupNode&) = default;
     virtual ~GroupNode();
 
+ public:
 	virtual nfa::Module buildModule() const;
 
  private:
@@ -81,6 +86,7 @@ class BackrefNode : public Node {
     BackrefNode(const BackrefNode&) = default;
     virtual BackrefNode& operator=(const BackrefNode&) = default;
 
+ public:
 	virtual nfa::Module buildModule() const;
 
  private:
@@ -94,6 +100,7 @@ class OrNode : public Node {
     virtual OrNode& operator=(const OrNode&) = default;
 	virtual ~OrNode();
 
+ public:
 	virtual nfa::Module buildModule() const;
 
  private:
@@ -107,6 +114,7 @@ class ConcatNode : public Node {
     virtual ConcatNode& operator=(const ConcatNode&) = default;
     virtual ~ConcatNode();
 
+ public:
 	virtual nfa::Module buildModule() const;
 
  private:

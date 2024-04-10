@@ -1,7 +1,11 @@
+#include <stack>
+
 #include "NFA.h"
+#include "AST.h"
 
 using std::set;
 using std::string;
+using std::stack;
 
 namespace nfa {
 
@@ -12,11 +16,26 @@ struct State {
 };
 
 NFA::NFA(const ast::Node* tree) {
-    // TODO
+    Module m(tree->buildModule());
+    startNode = m.start;
+    endNode = m.end;
 }
 
 NFA::~NFA() {
-    // TODO
+    set<Node*> discovered;
+    stack<Node*> enqueued;
+    discovered.insert(startNode);
+    enqueued.push(startNode);
+    while (!enqueued.empty()) {
+        Node* n = enqueued.top();
+        enqueued.pop();
+        for (Edge* out : n->outgoing) {
+            if (discovered.insert(out->dest).second) {
+                enqueued.push(out->dest);
+            }
+        }
+    }
+    for (Node* n : discovered) delete n;
 }
 
 set<string>* NFA::evaluate() const {
