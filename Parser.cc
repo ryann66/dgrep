@@ -6,6 +6,7 @@
 
 using std::vector;
 using std::find_if;
+using namespace ast;
 
 /**
  * Parses the tokens between the iterators (inclusive begin, exclusive end), and returns an AST node

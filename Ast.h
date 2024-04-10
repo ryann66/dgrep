@@ -7,6 +7,8 @@
 #include "Metastring.h"
 #include "Tokens.h"
 
+namespace ast {
+
 /**
  * Abstract class/interface for AST nodes
 */
@@ -93,3 +95,5 @@ class ConcatNode : public Node {
  private:
     std::vector<Node*> children;
 };
+
+}  // namespace ast

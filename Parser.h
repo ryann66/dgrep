@@ -3,7 +3,7 @@
 #include <vector>
 #include <set>
 
-#include "Ast.h"
+#include "AST.h"
 #include "Tokens.h"
 
 /**
@@ -11,4 +11,4 @@
  * NOTE: client is responsible for freeing the returned syntax tree
  * NODE: client maintains ownership of all the tokens
 */
-Node* parseTokensToAST(const std::vector<Token*>& tokens);
+ast::Node* parseTokensToAST(const std::vector<Token*>& tokens);

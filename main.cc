@@ -9,6 +9,7 @@
 #include "Parser.h"
 #include "truncation_error.h"
 #include "syntax_error.h"
+#include "AST.h"
 
 size_t maxLength = 256;
 
@@ -136,7 +137,7 @@ int main(int argc, char** argv) {
 
         // TODO: reduce unused backrefs
 
-        Node* root = parseTokensToAST(tokens);
+        ast::Node* root = parseTokensToAST(tokens);
         for (Token* t : tokens) {
             delete t;
         }

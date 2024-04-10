@@ -1,4 +1,4 @@
-#include "Ast.h"
+#include "AST.h"
 #include "truncation_error.h"
 
 using std::string;
@@ -6,6 +6,8 @@ using std::set;
 using std::vector;
 
 using metastring::Metastring;
+
+namespace ast {
 
 RepeatNode::~RepeatNode() {
     delete child;
@@ -25,3 +27,5 @@ ConcatNode::~ConcatNode() {
         delete n;
     }
 }
+
+}  // namespace ast
