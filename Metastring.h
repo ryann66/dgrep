@@ -1,9 +1,7 @@
 #pragma once
 
-#include <string>
-#include <memory>
 #include <iostream>
-#include <stack>
+#include <map>
 
 namespace metastring {
 
@@ -62,7 +60,13 @@ class Metastring {
     Metastring& endBackrefLogging(unsigned char br);
     
  private:
+    // WARNING: does not initialize str
+    // You are responsible for initializing fields
+    Metastring();
 
+    char* str;
+    size_t strlen;
+    std::map<unsigned char, std::pair<const char*, const char*>> backrefs;
 };
 
 }  // namespace metastring

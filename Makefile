@@ -4,7 +4,7 @@ DFLAGS=-g -Og
 BFLAGS=-O2
 LFLAGS=
 LIBS=
-OBJS=Ast.o LinkedString.o main.o Metastring.o Parser.o Tokenizer.o Tokens.o truncation_error.o
+OBJS=Ast.o main.o Metastring.o Parser.o Tokenizer.o Tokens.o truncation_error.o
 
 # setup
 debug: override CFLAGS+=$(DFLAGS)
@@ -34,13 +34,10 @@ Tokens.cc: globals.h
 Ast.o: Ast.cc Ast.h Metastring.h Tokens.h truncation_error.h globals.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-LinkedString.o: LinkedString.cc LinkedString.h LinkedStringPrivate.h
-	$(CC) $(CFLAGS) -c -o $@ $<
-
 main.o: main.cc Tokens.h Tokenizer.h Parser.h Ast.h Metastring.h truncation_error.h globals.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-Metastring.o: Metastring.cc Metastring.h globals.h truncation_error.h LinkedString.h LinkedStringPrivate.h
+Metastring.o: Metastring.cc Metastring.h globals.h truncation_error.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 Parser.o: Parser.cc Parser.h Ast.h Metastring.h Tokens.h syntax_error.h

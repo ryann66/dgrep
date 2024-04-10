@@ -1,6 +1,7 @@
 Implement graph, module for NFA
 Implement AST->NFA parser
 Implement Metastring
+Implement parallel graph search to interpret NFA
 Debug/Testing MVP
 Implement post parser group number reducer for unused backrefs
 Redo tokenizer character class functions to use set not stack
