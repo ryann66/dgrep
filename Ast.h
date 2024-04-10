@@ -6,6 +6,7 @@
 
 #include "Metastring.h"
 #include "Tokens.h"
+#include "NFAcomponents.h"
 
 namespace ast {
 
@@ -17,6 +18,8 @@ class Node {
     Node() = default;
     Node(const Node&) = default;
     virtual Node& operator=(const Node&) = default;
+
+	virtual nfa::Module buildModule() const = 0;
 };
 
 class LiteralNode : public Node {
@@ -25,6 +28,8 @@ class LiteralNode : public Node {
 	LiteralNode(const char* str) : lit(str) { }
     LiteralNode(const LiteralNode&) = default;
     virtual LiteralNode& operator=(const LiteralNode&) = default;
+
+	virtual nfa::Module buildModule() const;
 
  private:
     std::string lit;
@@ -36,6 +41,8 @@ class CharsetNode : public Node {
     CharsetNode(const CharsetNode&) = default;
     virtual CharsetNode& operator=(const CharsetNode&) = default;
 
+	virtual nfa::Module buildModule() const;
+
  private:
     const CharsetToken chs;
 };
@@ -46,6 +53,8 @@ class RepeatNode : public Node {
     RepeatNode(const RepeatNode&) = default;
     virtual RepeatNode& operator=(const RepeatNode&) = default;
     virtual ~RepeatNode();
+
+	virtual nfa::Module buildModule() const;
 
  private:
     Node* child;
@@ -59,6 +68,8 @@ class GroupNode : public Node {
     virtual GroupNode& operator=(const GroupNode&) = default;
     virtual ~GroupNode();
 
+	virtual nfa::Module buildModule() const;
+
  private:
     unsigned char backref;
     Node* child;
@@ -69,6 +80,8 @@ class BackrefNode : public Node {
     BackrefNode(unsigned char br) : backref(br) { }
     BackrefNode(const BackrefNode&) = default;
     virtual BackrefNode& operator=(const BackrefNode&) = default;
+
+	virtual nfa::Module buildModule() const;
 
  private:
     unsigned char backref;
@@ -81,6 +94,8 @@ class OrNode : public Node {
     virtual OrNode& operator=(const OrNode&) = default;
 	virtual ~OrNode();
 
+	virtual nfa::Module buildModule() const;
+
  private:
     Node *ln, *rn;
 };
@@ -91,6 +106,8 @@ class ConcatNode : public Node {
     ConcatNode(const ConcatNode&) = default;
     virtual ConcatNode& operator=(const ConcatNode&) = default;
     virtual ~ConcatNode();
+
+	virtual nfa::Module buildModule() const;
 
  private:
     std::vector<Node*> children;

@@ -10,6 +10,7 @@
 #include "truncation_error.h"
 #include "syntax_error.h"
 #include "AST.h"
+#include "NFA.h"
 
 size_t maxLength = 256;
 
@@ -19,6 +20,7 @@ using std::endl;
 using std::vector;
 using std::set;
 using std::to_string;
+using nfa::NFA;
 
 void usage(const char* pname) {
     cout << pname << " <regex>" << endl;
@@ -137,14 +139,21 @@ int main(int argc, char** argv) {
 
         // TODO: reduce unused backrefs
 
+        // parse token list into AST
         ast::Node* root = parseTokensToAST(tokens);
         for (Token* t : tokens) {
             delete t;
         }
         
-        // TODO: parse ast into nfa
+        // parse AST into NFA
+        NFA graph(root);
+        delete root;
 
-        // TODO: evaluate nfa
+        set<string>* strings = graph.evaluate();
+        for (const string& str : *strings) {
+            cout << str << endl;
+        }
+        delete strings;
 
     } catch (runtime_error e) {
         cout << "Error: " << e.what() << endl;
