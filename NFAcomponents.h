@@ -20,6 +20,8 @@ struct Edge {
 struct Module {
     Node* start;
     Node* end;
+
+    Module duplicate() const;
 };
 
 struct CharEdge : public Edge {

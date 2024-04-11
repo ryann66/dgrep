@@ -9,6 +9,10 @@ using std::stack;
 
 namespace nfa {
 
+Module Module::duplicate() const {
+    // TODO
+}
+
 // represents a state in the NFA
 struct State {
     Node* state;
