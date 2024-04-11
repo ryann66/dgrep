@@ -25,11 +25,13 @@ size_t MetastringHash::operator()(const Metastring& str) const {
 }
 
 Metastring::Metastring(const string& str) {
+    strlen = str.length();
     this->str = new char[str.length() + 1];
     strcpy(this->str, str.c_str());
 }
 
 Metastring::Metastring(const char* str) {
+    strlen = std::strlen(str);
     this->str = new char[std::strlen(str) + 1];
     strcpy(this->str, str);
 }
@@ -38,11 +40,14 @@ Metastring::Metastring(char c) {
     this->str = new char[2];
     this->str[0] = c;
     this->str[1] = c;
+    strlen = 1;
 }
 
 Metastring::Metastring(const Metastring& other) {
+    strlen = other.strlen;
     str = new char[other.strlen + 1];
     strcpy(str, other.str);
+    backrefs = other.backrefs;
 }
 
 Metastring::Metastring() { }

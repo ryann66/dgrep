@@ -66,6 +66,7 @@ nfa::Module finite_series(Module m, unsigned int n) {
     m.end->outgoing.push_back(new nfa::Edge(dest));
     Module r(fixed_series(m, n));
     r.end = dest;
+    return r;
 }
 
 /**
