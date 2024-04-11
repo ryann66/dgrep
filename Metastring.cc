@@ -29,6 +29,11 @@ Metastring::Metastring(const string& str) {
     strcpy(this->str, str.c_str());
 }
 
+Metastring::Metastring(const char* str) {
+    this->str = new char[std::strlen(str) + 1];
+    strcpy(this->str, str);
+}
+
 Metastring::Metastring(char c) {
     this->str = new char[2];
     this->str[0] = c;

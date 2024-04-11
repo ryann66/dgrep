@@ -21,6 +21,7 @@ class Metastring {
      * Create a metastring with the given backing string
     */
     Metastring(const std::string& str);
+    Metastring(const char*);
     Metastring(char c);
 
     Metastring(const Metastring&);

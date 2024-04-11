@@ -1,4 +1,3 @@
-Implement graph, module for NFA
 Implement AST->NFA parser
 Implement parallel graph search to interpret NFA
 Debug/Testing MVP
