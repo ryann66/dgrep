@@ -3,9 +3,7 @@ Implement parallel graph search to interpret NFA
 Debug/Testing MVP
 Implement post parser group number reducer for unused backrefs
 Redo tokenizer character class functions to use set not stack
-Implement new encapsulated alphabet class
-CharsetTokens should use alphabet class
 LiteralToken should error if it encounters a character outside of the alphabet
-\w\W\s\S should only add tokens that are in the set and in the alphabet
+\w\W\s\S should only add tokens that are in the set and in the alphabet (without erroring)
 Metastring appending optimizations
 Straighten spaghetti

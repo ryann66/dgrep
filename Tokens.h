@@ -4,6 +4,8 @@
 #include <set>
 #include <iostream>
 
+#include "Alphabet.h"
+
 #define INFINITE_REPEAT 0xFFFFFFFF
 
 using std::string;
@@ -40,9 +42,9 @@ struct LiteralToken : public Token {
 };
 
 struct CharsetToken : public Token {
-    set<char> chars;
+    Alphabet chars;
 
-    CharsetToken(bool isNeg, const set<char>& chs);
+    CharsetToken(Alphabet& a) : Token(Charset), chars(a) { }
 
     virtual string toString();
 };

@@ -4,7 +4,7 @@ DFLAGS=-g -Og
 BFLAGS=-O2
 LFLAGS=
 LIBS=
-OBJS=Ast.o main.o Metastring.o Parser.o Tokenizer.o Tokens.o truncation_error.o NFA.o
+OBJS=Ast.o main.o Metastring.o Parser.o Tokenizer.o Tokens.o truncation_error.o NFA.o Alphabet.o
 
 # setup
 debug: override CFLAGS+=$(DFLAGS)
@@ -53,6 +53,9 @@ Tokens.o: Tokens.cc Tokens.h globals.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 truncation_error.o: truncation_error.cc truncation_error.h globals.h
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+Alphabet.o: Alphabet.cc Alphabet.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 clean:

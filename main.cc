@@ -50,7 +50,7 @@ int main(int argc, char** argv) {
                     return EXIT_FAILURE;
                 }
                 try {
-                    CharsetToken* newAlph;
+                    Alphabet* newAlph;
                     if (argv[i][2] == '\0') {
                         i++;
                         if (i == argc) {
@@ -65,7 +65,7 @@ int main(int argc, char** argv) {
                         cout << "Poorly formed alphabet" << endl;
                         return EXIT_FAILURE;
                     }
-                    alphabet.swap(newAlph->chars);
+                    alphabet = *newAlph;
                     if (alphabet.empty()) {
                         cout << "Error: empty alphabet" << endl;
                         return EXIT_FAILURE;

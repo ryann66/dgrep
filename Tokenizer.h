@@ -5,6 +5,7 @@
 #include <string>
 
 #include "Tokens.h"
+#include "Alphabet.h"
 
 /**
  * Returns a vector of tokens, in order from front to back
@@ -21,4 +22,4 @@ std::vector<Token*> tokenize(std::string& str, std::set<unsigned char>* backrefs
  * On failure, throws exception and strPointer is undefined
  * NOTE: Caller is responsible for freeing returned token, unless it is nullptr
 */
-CharsetToken* readCharset(const char** strPointer);
+Alphabet* readCharset(const char** strPointer);

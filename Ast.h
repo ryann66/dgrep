@@ -39,7 +39,7 @@ class LiteralNode : public Node {
 
 class CharsetNode : public Node {
  public:
-    CharsetNode(const CharsetToken& token) : chs(token) { }
+    CharsetNode(const CharsetToken& token) : chs(token.chars) { }
     CharsetNode(const CharsetNode&) = default;
     virtual CharsetNode& operator=(const CharsetNode&) = default;
 
@@ -47,7 +47,7 @@ class CharsetNode : public Node {
 	virtual nfa::Module buildModule() const;
 
  private:
-    const CharsetToken chs;
+    const Alphabet chs;
 };
 
 class RepeatNode : public Node {

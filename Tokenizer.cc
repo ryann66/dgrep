@@ -7,6 +7,7 @@
 #include "Tokenizer.h"
 #include "syntax_error.h"
 #include "globals.h"
+#include "Alphabet.h"
 
 using std::find;
 using std::vector;
@@ -14,15 +15,6 @@ using std::string;
 using std::set;
 using std::stack;
 using std::runtime_error;
-
-/**
- * initializes the alphabet to be all 'standard' ASCII characters
- * NOTE: standard ASCII characters are letters, numbers, symbols, and space
- *       this excludes characters like tab, as well as all control characters
-*/
-set<char> initAlphabet();
-
-set<char> alphabet(initAlphabet());
 
 void addLower(stack<char>& s) {
     for (char c = 'a'; c <= 'z'; c++) {
@@ -191,13 +183,15 @@ vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
                     throw syntax_error("{<num> must be followed by , or }");
                     input--;
                     break;
-                case '[':  // charset start
+                case '[':{  // charset start
                     if (!lit.empty()) {
                         tokens.push_back(new LiteralToken(lit));
                         lit.clear();
                     }
-                    tokens.push_back(readCharset(&input));
-                    break;
+                    Alphabet* a = readCharset(&input);
+                    tokens.push_back(new CharsetToken(*a));
+                    delete a;
+                    break;}
                 case '|':  // or
                     if (!lit.empty()) {
                         tokens.push_back(new LiteralToken(lit));
@@ -211,8 +205,8 @@ vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
                         lit.clear();
                     }
                     {
-                        set<char> s;
-                        tokens.push_back(new CharsetToken(true, s));
+                        Alphabet a;
+                        tokens.push_back(new CharsetToken(a));
                     }
                     break;
                 case '?':  // zero or one
@@ -283,7 +277,8 @@ vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
                                     st.insert(s.top());
                                     s.pop();
                                 }
-                                tokens.push_back(new CharsetToken(false, st));
+                                Alphabet a(false, st);
+                                tokens.push_back(new CharsetToken(a));
                             }
                             break;
                         case 'W':
@@ -303,7 +298,8 @@ vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
                                     st.insert(s.top());
                                     s.pop();
                                 }
-                                tokens.push_back(new CharsetToken(true, st));
+                                Alphabet a(true, st);
+                                tokens.push_back(new CharsetToken(a));
                             }
                             break;
                         case 's':
@@ -320,7 +316,8 @@ vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
                                     st.insert(s.top());
                                     s.pop();
                                 }
-                                tokens.push_back(new CharsetToken(false, st));
+                                Alphabet a(false, st);
+                                tokens.push_back(new CharsetToken(a));
                             }
                             break;
                         case 'S':
@@ -337,7 +334,8 @@ vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
                                     st.insert(s.top());
                                     s.pop();
                                 }
-                                tokens.push_back(new CharsetToken(true, st));
+                                Alphabet a(true, st);
+                                tokens.push_back(new CharsetToken(a));
                             }
                             break;
                         case '*':
@@ -407,7 +405,7 @@ vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
     }
 }
 
-CharsetToken* readCharset(const char** strPointer) {
+Alphabet* readCharset(const char** strPointer) {
     const char* input = *strPointer;
     bool negation = false;
     stack<char> chs;
@@ -553,11 +551,5 @@ CharsetToken* readCharset(const char** strPointer) {
     // leave input on trailing ]
     *strPointer = input;
 
-    return new CharsetToken(negation, chars);
-}
-
-set<char> initAlphabet() {
-    set<char> alph;
-    for (char c = 32; c < 127; c++) alph.insert(c);
-    return alph;
+    return new Alphabet(negation, chars);
 }
