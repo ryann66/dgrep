@@ -2,6 +2,8 @@
 
 #include "Alphabet.h"
 
+#define INFINITE_REPEAT 0xFFFFFFFF
+
 // maximum length of matched strings
 extern size_t maxLength;
 

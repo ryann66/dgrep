@@ -6,8 +6,6 @@
 
 #include "Alphabet.h"
 
-#define INFINITE_REPEAT 0xFFFFFFFF
-
 using std::string;
 using std::set;
 using std::ostream;
@@ -69,6 +67,6 @@ struct GroupToken : public Token {
 };
 
 inline ostream& operator<<(ostream& os, Token* t) {
-    os << t->toString();;
+    os << t->toString();
     return os;
 }
