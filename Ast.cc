@@ -149,7 +149,7 @@ nfa::Module OrNode::buildModule() const {
     Module leftInner(ln->buildModule());
     start->outgoing.push_back(new nfa::Edge(leftInner.start));
     leftInner.end->outgoing.push_back(new nfa::Edge(end));
-    Module rightInner(ln->buildModule());
+    Module rightInner(rn->buildModule());
     start->outgoing.push_back(new nfa::Edge(rightInner.start));
     rightInner.end->outgoing.push_back(new nfa::Edge(end));
     return Module(start, end);

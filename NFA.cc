@@ -119,17 +119,17 @@ set<string>* NFA::evaluate() const {
     Metastring m("");
     states.emplace(startNode, m);
     while (!states.empty()) {
-        try {
-            State s(states.top());
-            states.pop();
-            if (s.state == endNode) {
-                ret->insert(s.string.toString());
-                continue;
-            }
-            for (Edge* e : s.state->outgoing) {
+        State s(states.top());
+        states.pop();
+        if (s.state == endNode) {
+            ret->insert(s.string.toString());
+            continue;
+        }
+        for (Edge* e : s.state->outgoing) {
+            try {
                 e->traverse(s, states);
-            }
-        } catch (truncation_error*) { }
+            } catch (truncation_error*) { }
+        }
     }
     return ret;
 }
