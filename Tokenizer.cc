@@ -205,8 +205,7 @@ vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
                         lit.clear();
                     }
                     {
-                        Alphabet a;
-                        tokens.push_back(new CharsetToken(a));
+                        tokens.push_back(new CharsetToken(alphabet));
                     }
                     break;
                 case '?':  // zero or one
