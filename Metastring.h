@@ -67,7 +67,7 @@ class Metastring {
 
     char* str;
     size_t strlen;
-    std::map<unsigned char, std::pair<const char*, const char*>> backrefs;
+    std::map<unsigned char, std::pair<size_t, size_t>> backrefs;
 };
 
 }  // namespace metastring

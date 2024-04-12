@@ -175,6 +175,7 @@ nfa::Module ConcatNode::buildModule() const {
         m = (*iter)->buildModule();
         end->outgoing.push_back(new nfa::Edge(m.start));
         end = m.end;
+        iter++;
     }
     return Module(start, end);
 }

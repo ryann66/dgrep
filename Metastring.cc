@@ -104,18 +104,25 @@ Metastring operator+(const Metastring& lhs, const string& rhs) {
 
 Metastring& Metastring::appendBackref(unsigned char br) {
     if (br == 0) return *this;
+    
+    // find backref
     auto iter = backrefs.find(br);
-    if (iter == backrefs.end()) throw logic_error("Undefined backref");
-    const char* start = (*iter).second.first, *end = (*iter).second.second;
-    if (end == nullptr) throw logic_error("Open backref");
+    if (iter == backrefs.end()) throw new logic_error("Undefined backref");
+    size_t start = (*iter).second.first, end = (*iter).second.second;
+    if (end < start) throw new logic_error("Open backref");
     size_t len = end - start;
-    if (strlen + len > maxLength) throw new truncation_error();
-    char* dst = new char[strlen + len + 1];
-    strcpy(dst, str);
-    dst += strlen;
-    strncpy(dst, start, len);
-    dst[len] = '\0';
+    
+    // copy to new buffer
+    if (len == 0) return *this;
+    char* newStr = new char[strlen + len + 1];
+    strcpy(newStr, str);
+    strncpy(newStr + strlen, str+start, len);
+    
+    // fix strlen field, add null terminater
     strlen += len;
+    newStr[strlen] = '\0';
+    delete str;
+    str = newStr;
     return *this;
 }
 
@@ -130,7 +137,7 @@ string Metastring::toString() const {
 
 Metastring& Metastring::startBackrefLogging(unsigned char br) {
     if (backrefs.find(br) != backrefs.end()) throw logic_error("Double declaration of backrefs");
-    pair<const char*, const char*> p(str + strlen, nullptr);
+    pair<size_t, size_t> p(strlen, 0);
     backrefs[br] = p;
     return *this;
 }
@@ -139,7 +146,7 @@ Metastring& Metastring::endBackrefLogging(unsigned char br) {
     auto iter = backrefs.find(br);
     if (iter == backrefs.end()) throw logic_error("Undefined backref");
     if (iter->second.second) throw logic_error("Double closure of backref");
-    iter->second.second = str + strlen;
+    iter->second.second = strlen;
     return *this;
 }
 
