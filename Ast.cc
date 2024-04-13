@@ -38,22 +38,22 @@ RepeatNode::~RepeatNode() {
  * Uses the given module
  * Warning: the module should have no outgoing edges from m.end (they will be duplicated)
 */
-nfa::Module fixed_series(Module m, unsigned int n) {
+Module fixed_series(Module m, unsigned int n) {
     if (n == 0) throw new logic_error("Finite series 0 length: memory leak");
     if (n == 1) {
         return m;
     }
-    Module base(m.duplicate());
+    Module front(m.duplicate());
     for (unsigned int i = 1; i < n - 1; i++) {
-        // expand base with m
+        // expand front with m
         Module dup(m.duplicate());
-        base.end->outgoing.push_back(new nfa::Edge(dup.start));
-        base.end = dup.end;
+        front.end->outgoing.push_back(new nfa::Edge(dup.start));
+        front.end = dup.end;
     }
-    // stitch m onto end of base
-    base.end->outgoing.push_back(new nfa::Edge(m.start));
-    base.end = m.end;
-    return base;
+    // stitch m onto end of front
+    front.end->outgoing.push_back(new nfa::Edge(m.start));
+    front.end = m.end;
+    return front;
 }
 
 /**
@@ -61,7 +61,7 @@ nfa::Module fixed_series(Module m, unsigned int n) {
  * between 1 and n times
  * Uses the given module
 */
-nfa::Module finite_series(Module m, unsigned int n) {
+Module finite_series(Module m, unsigned int n) {
     nfa::Node* dest = new nfa::Node();
     m.end->outgoing.push_back(new nfa::Edge(dest));
     Module r(fixed_series(m, n));
@@ -74,8 +74,11 @@ nfa::Module finite_series(Module m, unsigned int n) {
  * (up to infinity)
  * Uses the given module
 */
-nfa::Module infinite_series(Module m) {
+Module infinite_series(Module m) {
+    nfa::Node* newEnd = new nfa::Node();
     m.end->outgoing.push_back(new nfa::Edge(m.start));
+    m.end->outgoing.push_back(new nfa::Edge(newEnd));
+    m.end = newEnd;
     return m;
 }
 

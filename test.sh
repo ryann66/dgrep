@@ -4,6 +4,10 @@
 # First column of csv file is alphabet, second column is length, third column is regex
 # NOTE: alphabet should not be surrounded by [] brackets
 
+# This testing script does not cover:
+#   {n,n} notation for repeats
+#   Backreferences
+
 testfile="test.csv"
 separator=','
 

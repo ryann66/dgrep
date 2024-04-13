@@ -111,6 +111,7 @@ Metastring& Metastring::appendBackref(unsigned char br) {
     size_t start = (*iter).second.first, end = (*iter).second.second;
     if (end < start) throw new logic_error("Open backref");
     size_t len = end - start;
+    if (len + strlen > maxLength) throw new truncation_error();
     
     // copy to new buffer
     if (len == 0) return *this;

@@ -22,6 +22,11 @@ struct Edge {
 
     explicit Edge(Node* d) : dest(d) { }
 
+    /**
+     * Returns a shallow clone of this, with no destination (set to nullptr)
+    */
+    virtual Edge* clone() { return new Edge(nullptr); }
+
     virtual void traverse(State&, std::stack<State>&);
 };
 
@@ -49,6 +54,8 @@ struct CharEdge : public Edge {
 
     explicit CharEdge(Node* d, char c) : Edge(d), c(c) { }
 
+    virtual Edge* clone() { return new CharEdge(nullptr, c); }
+
     virtual void traverse(State&, std::stack<State>&);
 };
 
@@ -56,6 +63,8 @@ struct StringEdge : public Edge {
     std::string s;
 
     explicit StringEdge(Node* d, const std::string& s) : Edge(d), s(s) { }
+
+    virtual Edge* clone() { return new StringEdge(nullptr, s); }
 
     virtual void traverse(State&, std::stack<State>&);
 };
@@ -66,6 +75,8 @@ struct BackrefEdge : public Edge {
 
     explicit BackrefEdge(Node* d, unsigned char br) : Edge(d), br(br) { }
 
+    virtual Edge* clone() { return new BackrefEdge(nullptr, br); }
+
     virtual void traverse(State&, std::stack<State>&);
 };
 
@@ -75,6 +86,8 @@ struct StartAppendEdge : public Edge {
 
     explicit StartAppendEdge(Node* d, unsigned char br) : Edge(d), br(br) { }
 
+    virtual Edge* clone() { return new StartAppendEdge(nullptr, br); }
+
     virtual void traverse(State&, std::stack<State>&);
 };
 
@@ -83,6 +96,8 @@ struct EndAppendEdge : public Edge {
     unsigned char br;
 
     explicit EndAppendEdge(Node* d, unsigned char br) : Edge(d), br(br) { }
+
+    virtual Edge* clone() { return new EndAppendEdge(nullptr, br); }
 
     virtual void traverse(State&, std::stack<State>&);
 };

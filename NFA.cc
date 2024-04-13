@@ -53,8 +53,10 @@ Module Module::duplicate() const {
         Node* newNode = conversion[oldNode];
         newNode->outgoing.reserve(oldNode->outgoing.size());
         for (Edge* e : oldNode->outgoing) {
-            Edge* newE = new Edge(conversion[e->dest]);
-            newNode->outgoing.emplace_back();
+            // use clone to preserve data apart from dest
+            Edge* newE = e->clone();
+            newE->dest = conversion[e->dest];
+            newNode->outgoing.push_back(newE);
         }
     }
     return Module(conversion[start], conversion[end]);
