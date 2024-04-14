@@ -103,8 +103,6 @@ Metastring operator+(const Metastring& lhs, const string& rhs) {
 }
 
 Metastring& Metastring::appendBackref(unsigned char br) {
-    if (br == 0) return *this;
-    
     // find backref
     auto iter = backrefs.find(br);
     if (iter == backrefs.end()) throw new logic_error("Undefined backref");

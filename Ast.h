@@ -21,6 +21,7 @@ class Node {
 
  public:
 	virtual nfa::Module buildModule() const = 0;
+	virtual void removeUnusedBackrefs(std::set<unsigned char>&) { }
 };
 
 class LiteralNode : public Node {
@@ -59,6 +60,7 @@ class RepeatNode : public Node {
 
  public:
 	virtual nfa::Module buildModule() const;
+	virtual void removeUnusedBackrefs(std::set<unsigned char>& usedBackrefs) { child->removeUnusedBackrefs(usedBackrefs); }
 
  private:
     Node* child;
@@ -74,6 +76,10 @@ class GroupNode : public Node {
 
  public:
 	virtual nfa::Module buildModule() const;
+	virtual void removeUnusedBackrefs(std::set<unsigned char>& usedBackrefs) {
+		if (usedBackrefs.count(backref) == 0) backref = 0;
+		child->removeUnusedBackrefs(usedBackrefs);
+	}
 
  private:
     unsigned char backref;
@@ -102,6 +108,10 @@ class OrNode : public Node {
 
  public:
 	virtual nfa::Module buildModule() const;
+    virtual void removeUnusedBackrefs(std::set<unsigned char>& usedBackrefs) {
+		ln->removeUnusedBackrefs(usedBackrefs);
+		rn->removeUnusedBackrefs(usedBackrefs);
+	}
 
  private:
     Node *ln, *rn;
@@ -116,6 +126,9 @@ class ConcatNode : public Node {
 
  public:
 	virtual nfa::Module buildModule() const;
+    virtual void removeUnusedBackrefs(std::set<unsigned char>& usedBackrefs) {
+		for (auto ch : children) ch->removeUnusedBackrefs(usedBackrefs);
+	}
 
  private:
     std::vector<Node*> children;

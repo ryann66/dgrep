@@ -126,9 +126,12 @@ GroupNode::~GroupNode() {
 }
 
 nfa::Module GroupNode::buildModule() const {
+    Module inner(child->buildModule());
+    if (backref == 0) {
+        return inner;
+    }
     nfa::Node* start = new nfa::Node();
     nfa::Node* end = new nfa::Node();
-    Module inner(child->buildModule());
     start->outgoing.push_back(new nfa::StartAppendEdge(inner.start, backref));
     inner.end->outgoing.push_back(new nfa::EndAppendEdge(end, backref));
     return Module(start, end);

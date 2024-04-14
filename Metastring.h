@@ -55,7 +55,6 @@ class Metastring {
 
     /**
      * Enables or disables logging appended characters/strings as backrefs
-     * Does nothing if br == 0
     */
     Metastring& startBackrefLogging(unsigned char br);
     Metastring& endBackrefLogging(unsigned char br);

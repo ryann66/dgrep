@@ -137,13 +137,12 @@ int main(int argc, char** argv) {
         set<unsigned char> backrefs;
         vector<Token*> tokens(tokenize(regex, &backrefs));
 
-        // TODO: reduce unused backrefs
-
         // parse token list into AST
         ast::Node* root = parseTokensToAST(tokens);
         for (Token* t : tokens) {
             delete t;
         }
+        root->removeUnusedBackrefs(backrefs);
         
         // parse AST into NFA
         NFA graph(root);
