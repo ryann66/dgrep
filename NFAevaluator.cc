@@ -1,5 +1,6 @@
 #include <thread>
 #include <vector>
+#include <chrono>
 
 #include "NFAevaluator.h"
 #include "truncation_error.h"
@@ -9,6 +10,8 @@ using std::vector;
 using std::stack;
 using std::unique_lock;
 using std::mutex;
+using std::chrono::milliseconds;
+using std::chrono::duration;
 
 using metastring::Metastring;
 
@@ -22,7 +25,7 @@ void threadLoop(ParallelNFAevaluator* eval) {
             eval->activeThreads++;
 
             // get state
-            State s(eval->activeStates.front());
+            State s(eval->activeStates.top());
             eval->activeStates.pop();
             eval->stateLock.unlock();
 
@@ -57,10 +60,10 @@ void threadLoop(ParallelNFAevaluator* eval) {
             eval->syncVar.notify_all();
         } else {
             eval->stateLock.unlock();
-            // wait for a thread to terminate of for no threads to be active
-            // second condition is to ensure that the last thread didn't end while establishing wait call
-            unsigned int x = eval->activeThreads;
-            eval->syncVar.wait(lock, [x, eval]{ return eval->activeThreads == x || eval->activeThreads == 0; });
+            
+            // wait for a thread to terminate
+            duration d(milliseconds(1));
+            eval->syncVar.wait_for(lock, d);
         }
     }
 }

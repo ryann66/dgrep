@@ -3,7 +3,7 @@
 #include <atomic>
 #include <mutex>
 #include <condition_variable>
-#include <queue>
+#include <stack>
 #include <set>
 #include <string>
 
@@ -22,7 +22,7 @@ class ParallelNFAevaluator {
  private:
     std::atomic_uint activeThreads;
     Node* start, *end;
-    std::queue<State> activeStates;
+    std::stack<State> activeStates;
     std::set<std::string>* const output;
     std::mutex stateLock, outputLock, syncLock;
     std::condition_variable syncVar;
