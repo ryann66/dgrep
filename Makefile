@@ -4,7 +4,7 @@ DFLAGS=-g -Og
 BFLAGS=-O2
 LFLAGS=
 LIBS=
-OBJS=Ast.o main.o Metastring.o Parser.o Tokenizer.o Tokens.o truncation_error.o NFA.o Alphabet.o
+OBJS=Ast.o main.o Metastring.o Parser.o Tokenizer.o Tokens.o truncation_error.o NFA.o Alphabet.o NFAevaluator.o
 
 # setup
 debug: override CFLAGS+=$(DFLAGS)
@@ -36,6 +36,9 @@ Ast.o: Ast.cc Ast.h Metastring.h Tokens.h truncation_error.h globals.h NFAcompon
 
 NFA.o: NFA.cc NFA.h NFAcomponents.h
 	$(CC) $(CFLAGS) -c -o $@ $<
+
+NFAevaluator.o: NFAevaluator.cc NFAevaluator.h
+	$(CC) $(CFLAGS) -pthread -c -o $@ $<
 
 main.o: main.cc Tokens.h Tokenizer.h Parser.h Ast.h Metastring.h truncation_error.h globals.h
 	$(CC) $(CFLAGS) -c -o $@ $<

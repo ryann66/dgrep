@@ -3,6 +3,7 @@
 
 #include "NFA.h"
 #include "truncation_error.h"
+#include "NFAevaluator.h"
 
 using std::set;
 using std::string;
@@ -117,22 +118,8 @@ NFA::~NFA() {
 
 set<string>* NFA::evaluate() const {
     set<string>* ret = new set<string>();
-    stack<State> states;
-    Metastring m("");
-    states.emplace(startNode, m);
-    while (!states.empty()) {
-        State s(states.top());
-        states.pop();
-        if (s.state == endNode) {
-            ret->insert(s.string.toString());
-            continue;
-        }
-        for (Edge* e : s.state->outgoing) {
-            try {
-                e->traverse(s, states);
-            } catch (truncation_error*) { }
-        }
-    }
+    ParallelNFAevaluator evaluator(startNode, endNode, ret);
+    evaluator.evaluate();
     return ret;
 }
 
