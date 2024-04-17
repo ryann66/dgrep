@@ -19,7 +19,7 @@ while IFS="$separator" read -ra testarr; do
     len=${testarr[1]}
     regex=${testarr[2]}
 
-    ./dgrep -a ["$alpha"] -l $len -r "$regex" > act.test
+    ./dgrep -a ["$alpha"] -l $len -r "($regex)" > act.test
     ./dgrep -a ["$alpha"] -l $len -r '.*' | /bin/grep -E "^($regex)$" > exp.test
 
     diff=$(/bin/diff act.test exp.test)
