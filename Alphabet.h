@@ -11,6 +11,7 @@ class Alphabet {
     const std::set<char>::iterator end() const { return chars.end(); }
 
     size_t size() { return chars.size(); }
+    bool contains(char c) { return chars.count(c); }
     bool empty() { return chars.empty(); }
 
  private:

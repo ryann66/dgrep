@@ -1,4 +1,5 @@
 #include <stdexcept>
+#include <cstring>
 
 #include "Tokens.h"
 #include "globals.h"
@@ -10,6 +11,18 @@ using std::to_string;
 string Token::toString() {
     if (type == Or) return "Or";
     return "Invalid";
+}
+
+LiteralToken::LiteralToken(string& s) : Token(Literal), lit(s) {
+    const char* str = s.c_str();
+    while (*str) {
+        if (!alphabet.contains(*str)) throw new range_error("'" + string(1,*str) + "' is not in alphabet");
+        str++;
+    }
+}
+
+LiteralToken::LiteralToken(char c) : Token(Literal), lit(c, 1) {
+    if (!alphabet.contains(c)) throw new range_error("'" + string(1,c) + "' is not in alphabet");
 }
 
 string LiteralToken::toString() {

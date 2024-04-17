@@ -33,8 +33,8 @@ struct Token {
 struct LiteralToken : public Token {
     string lit;
 
-    LiteralToken(string& s) : Token(Literal), lit(s) { }
-    LiteralToken(char c) : Token(Literal), lit(1, c) { }
+    LiteralToken(string&);
+    LiteralToken(char);
 
     virtual string toString();
 };
