@@ -1,6 +1,3 @@
-Debug/Testing MVP
-Redo tokenizer character class functions to use set not stack
 LiteralToken should error if it encounters a character outside of the alphabet
 \w\W\s\S should only add tokens that are in the set and in the alphabet (without erroring)
 Metastring appending optimizations
-Straighten spaghetti

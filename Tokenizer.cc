@@ -16,44 +16,44 @@ using std::set;
 using std::stack;
 using std::runtime_error;
 
-void addLower(stack<char>& s) {
+void addLower(set<char>& s) {
     for (char c = 'a'; c <= 'z'; c++) {
-        s.push(c);
+        s.insert(c);
     }
 }
 
-void addUpper(stack<char>& s) {
+void addUpper(set<char>& s) {
     for (char c = 'A'; c <= 'Z'; c++) {
-        s.push(c);
+        s.insert(c);
     }
 }
 
-void addDigits(stack<char>& s) {
+void addDigits(set<char>& s) {
     for (char c = '0'; c <= '9'; c++) {
-        s.push(c);
+        s.insert(c);
     }
 }
 
-void addPunct(stack<char>& s) {
+void addPunct(set<char>& s) {
     for (char c = '!'; c <= '/'; c++) {
-        s.push(c);
+        s.insert(c);
     }
     for (char c = ':'; c <= '@'; c++) {
-        s.push(c);
+        s.insert(c);
     }
     for (char c = '['; c <= '`'; c++) {
-        s.push(c);
+        s.insert(c);
     }
     for (char c = '{'; c <= '~'; c++) {
-        s.push(c);
+        s.insert(c);
     }
 }
 
-void addSpace(stack<char>& s) {
+void addSpace(set<char>& s) {
     /*for (char c = 9; c <= 13; c++) {
         s.push(c);
     }*/
-    s.push(' ');
+    s.insert(' ');
 }
 
 vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
@@ -266,16 +266,11 @@ vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
                                 lit.clear();
                             }
                             {
-                                stack<char> s;
-                                addDigits(s);
-                                addLower(s);
-                                addUpper(s);
                                 set<char> st;
+                                addDigits(st);
+                                addLower(st);
+                                addUpper(st);
                                 st.insert('_');
-                                while (!s.empty()) {
-                                    st.insert(s.top());
-                                    s.pop();
-                                }
                                 Alphabet a(false, st);
                                 tokens.push_back(new CharsetToken(a));
                             }
@@ -287,16 +282,11 @@ vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
                                 lit.clear();
                             }
                             {
-                                stack<char> s;
-                                addDigits(s);
-                                addLower(s);
-                                addUpper(s);
                                 set<char> st;
+                                addDigits(st);
+                                addLower(st);
+                                addUpper(st);
                                 st.insert('_');
-                                while (!s.empty()) {
-                                    st.insert(s.top());
-                                    s.pop();
-                                }
                                 Alphabet a(true, st);
                                 tokens.push_back(new CharsetToken(a));
                             }
@@ -308,13 +298,8 @@ vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
                                 lit.clear();
                             }
                             {
-                                stack<char> s;
-                                addSpace(s);
                                 set<char> st;
-                                while (!s.empty()) {
-                                    st.insert(s.top());
-                                    s.pop();
-                                }
+                                addSpace(st);
                                 Alphabet a(false, st);
                                 tokens.push_back(new CharsetToken(a));
                             }
@@ -326,13 +311,8 @@ vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
                                 lit.clear();
                             }
                             {
-                                stack<char> s;
-                                addSpace(s);
                                 set<char> st;
-                                while (!s.empty()) {
-                                    st.insert(s.top());
-                                    s.pop();
-                                }
+                                addSpace(st);
                                 Alphabet a(true, st);
                                 tokens.push_back(new CharsetToken(a));
                             }
@@ -436,12 +416,13 @@ Alphabet* readCharset(const char** strPointer) {
 
             // find end
             while (!(*it == ':' && *(it + 1) == ']')) {
-                if (*it == '\0') {
+                if (*(it + 1) == '\0') {
                     // ERROR unmatched [:
                     throw syntax_error("Unmatched [:");
                 }
                 it++;
             }
+            if (*(it + 2) == '-' && *(it + 3) != ']') throw syntax_error("Invalid range start");
 
             // extract string
             char* cstr = new char[it - input + 1];
@@ -456,54 +437,56 @@ Alphabet* readCharset(const char** strPointer) {
             // input points to ]
 
             // find correct string
+            set<char> cs;
             if (str == "alnum") {
-                addLower(chs);
-                addUpper(chs);
-                addDigits(chs);
+                addLower(cs);
+                addUpper(cs);
+                addDigits(cs);
             } else if (str == "alpha") {
-                addLower(chs);
-                addUpper(chs);
+                addLower(cs);
+                addUpper(cs);
             } else if (str == "blank") {
-                chs.push(' ');
-                //chs.push('\t');
+                cs.insert(' ');
+                //cs.insert('\t');
             } /*else if (str == "cntrl") {
                 for (char c = 0; c <= 31; c++) {
-                    chs.push(c);
+                    cs.insert(c);
                 }
                 chs.push(127);
             }*/ else if (str == "digit") {
-                addDigits(chs);
+                addDigits(cs);
             } else if (str == "graph") {
-                addLower(chs);
-                addUpper(chs);
-                addDigits(chs);
-                addPunct(chs);
+                addLower(cs);
+                addUpper(cs);
+                addDigits(cs);
+                addPunct(cs);
             } else if (str == "lower") {
-                addLower(chs);
+                addLower(cs);
             } else if (str == "print") {
-                addLower(chs);
-                addUpper(chs);
-                addDigits(chs);
-                addPunct(chs);
-                chs.push(' ');
+                addLower(cs);
+                addUpper(cs);
+                addDigits(cs);
+                addPunct(cs);
+                cs.insert(' ');
             } else if (str == "punct") {
-                addPunct(chs);
+                addPunct(cs);
             } else if (str == "space") {
-                addSpace(chs);
+                addSpace(cs);
             } else if (str == "upper") {
-                addUpper(chs);
+                addUpper(cs);
             } else if (str == "xdigit") {
-                addDigits(chs);
+                addDigits(cs);
                 for (char c = 'a'; c <= 'f'; c++) {
-                    chs.push(c);
+                    cs.insert(c);
                 }
                 for (char c = 'A'; c <= 'F'; c++) {
-                    chs.push(c);
+                    cs.insert(c);
                 }
             } else {
                 // ERROR unknown named class
                 throw syntax_error("Unknown named class");
             }
+            for (char c : cs) chs.push(c);
             input++;
         }
         else if (*input == '-') {
@@ -513,6 +496,7 @@ Alphabet* readCharset(const char** strPointer) {
                 chs.push('-');
                 break;
             }
+            if (*input == '[') throw syntax_error("Invalid range end");
 
             char begin = chs.top(), end = *input;
             chs.pop();
