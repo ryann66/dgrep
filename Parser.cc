@@ -16,9 +16,9 @@ using namespace ast;
 Node* recursiveParse(vector<Token*>::const_iterator begin, vector<Token*>::const_iterator end);
 
 Node* parseTokensToAST(const vector<Token*>& tokens) {
-    if (tokens.empty()) throw syntax_error("Empty regex");
+    if (tokens.empty()) throw new syntax_error("Empty regex");
     Node* root = recursiveParse(tokens.begin(), tokens.end());
-    if (root == nullptr) throw syntax_error("Empty regex");
+    if (root == nullptr) throw new syntax_error("Empty regex");
     return root;
 }
 
@@ -33,28 +33,28 @@ Node* recursiveParse(vector<Token*>::const_iterator begin, vector<Token*>::const
                 result.push_back(new CharsetNode(*static_cast<CharsetToken*>(*begin)));
                 break;}
             case Repeat:{
-                if (result.empty()) throw syntax_error("Leading repeat token");
+                if (result.empty()) throw new syntax_error("Leading repeat token");
                 Node* last = result.back();
                 result.pop_back();
                 result.push_back(new RepeatNode(*static_cast<RepeatToken*>(*begin), last));
                 break;}
             case Or:{
-                if (result.empty()) throw syntax_error("Leading or token");
+                if (result.empty()) throw new syntax_error("Leading or token");
                 Node* lhs = result.size() == 1 ? result[0] : new ConcatNode(result);
                 Node* rhs = recursiveParse(++begin, end);
-                if (rhs == nullptr) throw syntax_error("Trailing or token");
+                if (rhs == nullptr) throw new syntax_error("Trailing or token");
                 return new OrNode(lhs, rhs);}
             case OpenGroup:{
                 unsigned char gn = static_cast<GroupToken*>(*begin)->groupNumber;
                 vector<Token*>::const_iterator endIter = find_if(begin, end, [gn](Token* t){ return t->type == CloseGroup && static_cast<GroupToken*>(t)->groupNumber == gn; });
-                if (endIter == end) throw syntax_error("Unmatched Opengroup");
+                if (endIter == end) throw new syntax_error("Unmatched Opengroup");
                 Node* groupContents = recursiveParse(begin + 1, endIter);
                 begin = endIter;
                 if (groupContents == nullptr) groupContents = new LiteralNode("");
                 result.push_back(new GroupNode(gn, groupContents));
                 break;}
             case CloseGroup:
-                throw syntax_error("Unmatched closegroup");
+                throw new syntax_error("Unmatched closegroup");
             case Backref:{
                 unsigned char grn = static_cast<GroupToken*>(*begin)->groupNumber;
                 result.push_back(new BackrefNode(grn));

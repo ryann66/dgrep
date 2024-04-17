@@ -70,7 +70,7 @@ int main(int argc, char** argv) {
                         cout << "Error: empty alphabet" << endl;
                         return EXIT_FAILURE;
                     }
-                } catch (runtime_error e) {
+                } catch (runtime_error* e) {
                     cout << "Poorly formed alphabet" << endl;
                     return EXIT_FAILURE;
                 }
@@ -154,8 +154,8 @@ int main(int argc, char** argv) {
         }
         delete strings;
 
-    } catch (runtime_error e) {
-        cout << "Error: " << e.what() << endl;
+    } catch (runtime_error* e) {
+        cout << "Error: " << e->what() << endl;
         return EXIT_FAILURE;
     }
 

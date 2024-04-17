@@ -20,7 +20,7 @@ Alphabet::Alphabet(bool isNegation, const set<char>& chs) {
         for (char c : chs) {
             if (chars.erase(c) == 0) {
                 // ERROR c is not in alphabet
-                throw range_error("'" + string(1,c) + "' is not in alphabet");
+                throw new range_error("'" + string(1,c) + "' is not in alphabet");
             }
         }
     } else {
@@ -28,7 +28,7 @@ Alphabet::Alphabet(bool isNegation, const set<char>& chs) {
         for (char c : chars) {
             if (alphabet.chars.find(c) == alphabet.end()) {
                 // ERROR c is not in alphabet
-                throw range_error("'" + string(1,c) + "' is not in alphabet");
+                throw new range_error("'" + string(1,c) + "' is not in alphabet");
             }
         }
     }

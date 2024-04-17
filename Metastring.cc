@@ -135,7 +135,7 @@ string Metastring::toString() const {
 }
 
 Metastring& Metastring::startBackrefLogging(unsigned char br) {
-    if (backrefs.find(br) != backrefs.end()) throw logic_error("Double declaration of backrefs");
+    if (backrefs.find(br) != backrefs.end()) throw new logic_error("Double declaration of backrefs");
     pair<size_t, size_t> p(strlen, 0);
     backrefs[br] = p;
     return *this;
@@ -143,8 +143,8 @@ Metastring& Metastring::startBackrefLogging(unsigned char br) {
 
 Metastring& Metastring::endBackrefLogging(unsigned char br) {
     auto iter = backrefs.find(br);
-    if (iter == backrefs.end()) throw logic_error("Undefined backref");
-    if (iter->second.second) throw logic_error("Double closure of backref");
+    if (iter == backrefs.end()) throw new logic_error("Undefined backref");
+    if (iter->second.second) throw new logic_error("Double closure of backref");
     iter->second.second = strlen;
     return *this;
 }
