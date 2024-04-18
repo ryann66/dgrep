@@ -1,5 +1,5 @@
 CC=g++
-CFLAGS=
+CFLAGS=--std=c++17
 DFLAGS=-g -Og
 BFLAGS=-O2
 LFLAGS=

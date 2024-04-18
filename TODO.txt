@@ -1,2 +1,0 @@
-\w\W\s\S should only add tokens that are in the set and in the alphabet (without erroring)
-Metastring appending optimizations

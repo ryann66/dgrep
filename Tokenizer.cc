@@ -271,6 +271,11 @@ vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
                                 addLower(st);
                                 addUpper(st);
                                 st.insert('_');
+                                for (auto itr = st.begin(); itr != st.end();) {
+                                    if (!alphabet.contains(*itr)) itr = st.erase(itr);
+                                    else ++itr;
+                                }
+                                if (st.empty()) throw new runtime_error("No elements in alphabet match '\\w'");
                                 Alphabet a(false, st);
                                 tokens.push_back(new CharsetToken(a));
                             }
@@ -287,7 +292,12 @@ vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
                                 addLower(st);
                                 addUpper(st);
                                 st.insert('_');
+                                for (auto itr = st.begin(); itr != st.end();) {
+                                    if (!alphabet.contains(*itr)) itr = st.erase(itr);
+                                    else ++itr;
+                                }
                                 Alphabet a(true, st);
+                                if (a.size() == 0) throw new runtime_error("No elements in alphabet match '\\W'");
                                 tokens.push_back(new CharsetToken(a));
                             }
                             break;
@@ -300,6 +310,11 @@ vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
                             {
                                 set<char> st;
                                 addSpace(st);
+                                for (auto itr = st.begin(); itr != st.end();) {
+                                    if (!alphabet.contains(*itr)) itr = st.erase(itr);
+                                    else ++itr;
+                                }
+                                if (st.empty()) throw new runtime_error("No elements in alphabet match '\\s'");
                                 Alphabet a(false, st);
                                 tokens.push_back(new CharsetToken(a));
                             }
@@ -313,7 +328,12 @@ vector<Token*> tokenize(string& str, set<unsigned char>* backrefs) {
                             {
                                 set<char> st;
                                 addSpace(st);
+                                for (auto itr = st.begin(); itr != st.end();) {
+                                    if (!alphabet.contains(*itr)) itr = st.erase(itr);
+                                    else ++itr;
+                                }
                                 Alphabet a(true, st);
+                                if (a.size() == 0) throw new runtime_error("No elements in alphabet match '\\S'");
                                 tokens.push_back(new CharsetToken(a));
                             }
                             break;
