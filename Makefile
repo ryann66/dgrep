@@ -18,47 +18,35 @@ all: dgrep
 dgrep: $(OBJS)
 	$(CC) $(LFLAGS) -o dgrep $(OBJS) $(LIBS)
 
-# header structure
-Ast.h: Metastring.h Tokens.h
-Parser.h: Ast.h Tokens.h
-Tokenizer.h: Tokens.h
-
-# cc header inclusions
-Ast.cc: truncation_error.h
-Metastring.cc: globals.h truncation_error.h
-Parser.cc: syntax_error.h
-Tokenizer.cc: syntax_error.h
-Tokens.cc: globals.h
-
 # objects
-Ast.o: Ast.cc Ast.h Metastring.h Tokens.h truncation_error.h globals.h NFAcomponents.h
+Alphabet.o: Alphabet.cc Alphabet.h globals.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-NFA.o: NFA.cc NFA.h NFAcomponents.h
+Ast.o: Ast.cc AST.h Metastring.h Tokens.h Alphabet.h NFAcomponents.h truncation_error.h globals.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-NFAevaluator.o: NFAevaluator.cc NFAevaluator.h
+NFA.o: NFA.cc NFA.h AST.h Metastring.h Tokens.h Alphabet.h NFAcomponents.h truncation_error.h globals.h NFAevaluator.h
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+NFAevaluator.o: NFAevaluator.cc NFAevaluator.h NFA.h AST.h Metastring.h Tokens.h Alphabet.h NFAcomponents.h
 	$(CC) $(CFLAGS) -pthread -c -o $@ $<
 
-main.o: main.cc Tokens.h Tokenizer.h Parser.h Ast.h Metastring.h truncation_error.h globals.h
+main.o: main.cc Tokens.h Alphabet.h Tokenizer.h Parser.h AST.h Metastring.h NFAcomponents.h truncation_error.h globals.h syntax_error.h NFA.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-Metastring.o: Metastring.cc Metastring.h globals.h truncation_error.h nonmatching_error.h
+Metastring.o: Metastring.cc Metastring.h globals.h Alphabet.h truncation_error.h nonmatching_error.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-Parser.o: Parser.cc Parser.h Ast.h Metastring.h Tokens.h syntax_error.h
+Parser.o: Parser.cc Parser.h AST.h Metastring.h Tokens.h Alphabet.h NFAcomponents.h syntax_error.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-Tokenizer.o: Tokenizer.cc Tokenizer.h Tokens.h syntax_error.h globals.h
+Tokenizer.o: Tokenizer.cc Tokenizer.h Tokens.h Alphabet.h syntax_error.h globals.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-Tokens.o: Tokens.cc Tokens.h globals.h
+Tokens.o: Tokens.cc Tokens.h Alphabet.h globals.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-truncation_error.o: truncation_error.cc truncation_error.h globals.h
-	$(CC) $(CFLAGS) -c -o $@ $<
-
-Alphabet.o: Alphabet.cc Alphabet.h
+truncation_error.o: truncation_error.cc truncation_error.h globals.h Alphabet.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 clean:

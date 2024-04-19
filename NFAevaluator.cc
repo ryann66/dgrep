@@ -4,7 +4,6 @@
 #include <stdexcept>
 
 #include "NFAevaluator.h"
-#include "truncation_error.h"
 
 using std::thread;
 using std::vector;
