@@ -77,20 +77,20 @@ void StringEdge::traverse(State& state, stack<State>& res) {
 
 void BackrefEdge::traverse(State& state, stack<State>& res) {
     // append backref onto the new state but otherwise preserve string
-    state.string.appendBackref(br);
-    res.emplace(dest, state.string);
+    Metastring m(state.string.appendBackref(br));
+    res.emplace(dest, m);
 }
 
 void StartAppendEdge::traverse(State& state, stack<State>& res) {
     // append backref onto the new state but otherwise preserve string
-    state.string.startBackrefLogging(br);
-    res.emplace(dest, state.string);
+    Metastring m(state.string.startBackrefLogging(br));
+    res.emplace(dest, m);
 }
 
 void EndAppendEdge::traverse(State& state, stack<State>& res) {
     // append backref onto the new state but otherwise preserve string
-    state.string.endBackrefLogging(br);
-    res.emplace(dest, state.string);
+    Metastring m(state.string.endBackrefLogging(br));
+    res.emplace(dest, m);
 }
 
 NFA::NFA(const ast::Node* tree) {

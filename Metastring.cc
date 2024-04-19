@@ -103,7 +103,7 @@ Metastring operator+(const Metastring& lhs, const string& rhs) {
     return m;
 }
 
-Metastring& Metastring::appendBackref(unsigned char br) {
+Metastring Metastring::appendBackref(unsigned char br) {
     // find backref
     auto iter = backrefs.find(br);
     if (iter == backrefs.end()) throw new nonmatching_error("Backref not defined");
@@ -112,18 +112,20 @@ Metastring& Metastring::appendBackref(unsigned char br) {
     size_t len = end - start;
     if (len + strlen > maxLength) throw new truncation_error();
     
-    // copy to new buffer
-    if (len == 0) return *this;
-    char* newStr = new char[strlen + len + 1];
-    strcpy(newStr, str);
-    strncpy(newStr + strlen, str+start, len);
-    
-    // fix strlen field, add null terminater
-    strlen += len;
-    newStr[strlen] = '\0';
-    delete str;
-    str = newStr;
-    return *this;
+    // create new metastring and init
+    Metastring m;
+    m.backrefs = backrefs;
+    m.strlen = strlen + len;
+    m.str = new char[strlen + len + 1];
+    strcpy(m.str, str);
+
+    // append backref
+    char* appstr = m.str + strlen;
+    for (size_t i = start; i < end; i++) {
+        *appstr++ = str[i];
+    }
+    *appstr = '\0';
+    return m;
 }
 
 std::ostream& operator<<(std::ostream& os, const Metastring& ms) {
@@ -135,17 +137,19 @@ string Metastring::toString() const {
     return string(str);
 }
 
-Metastring& Metastring::startBackrefLogging(unsigned char br) {
+Metastring Metastring::startBackrefLogging(unsigned char br) {
+    Metastring m(*this);
     pair<size_t, size_t> p(strlen, 0);
-    backrefs[br] = p;
-    return *this;
+    m.backrefs[br] = p;
+    return m;
 }
 
-Metastring& Metastring::endBackrefLogging(unsigned char br) {
-    auto iter = backrefs.find(br);
+Metastring Metastring::endBackrefLogging(unsigned char br) {
+    Metastring m(*this);
+    auto iter = m.backrefs.find(br);
     if (iter == backrefs.end()) throw new logic_error("Undefined backref");
-    iter->second.second = strlen;
-    return *this;
+    iter->second.second = m.strlen;
+    return m;
 }
 
 }  // namespace metastring

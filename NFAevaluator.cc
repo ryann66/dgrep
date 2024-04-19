@@ -1,6 +1,7 @@
 #include <thread>
 #include <vector>
 #include <chrono>
+#include <stdexcept>
 
 #include "NFAevaluator.h"
 #include "truncation_error.h"
@@ -12,6 +13,7 @@ using std::unique_lock;
 using std::mutex;
 using std::chrono::milliseconds;
 using std::chrono::duration;
+using std::runtime_error;
 
 using metastring::Metastring;
 
@@ -41,7 +43,7 @@ void threadLoop(ParallelNFAevaluator* eval) {
                 for (Edge* out : s.state->outgoing) {
                     try {
                         out->traverse(s, newStates);
-                    } catch (truncation_error*) { }
+                    } catch (runtime_error*) { }
                 }
 
                 if (!newStates.empty()) {
@@ -74,6 +76,7 @@ void ParallelNFAevaluator::evaluate() {
     if (numThreads == 0) {
         numThreads = 8;
     }
+    numThreads = 1;
     activeThreads = 0;
     Metastring m("");
     activeStates.emplace(start, m);

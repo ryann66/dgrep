@@ -39,9 +39,9 @@ class Metastring {
     friend Metastring operator+(const Metastring&, const std::string&);
 
     /**
-     * Appends the given backreference onto this
+     * Appends the given backreference onto a new metastring
     */
-    Metastring& appendBackref(unsigned char);
+    Metastring appendBackref(unsigned char);
 
     /**
      * Prints the metastring to the ostream
@@ -56,8 +56,8 @@ class Metastring {
     /**
      * Enables or disables logging appended characters/strings as backrefs
     */
-    Metastring& startBackrefLogging(unsigned char br);
-    Metastring& endBackrefLogging(unsigned char br);
+    Metastring startBackrefLogging(unsigned char br);
+    Metastring endBackrefLogging(unsigned char br);
     
  private:
     // WARNING: does not initialize str
