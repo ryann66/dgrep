@@ -1,7 +1,7 @@
 CC=g++
 CFLAGS=--std=c++17
 DFLAGS=-g -Og
-BFLAGS=-O2
+BFLAGS=-O3
 LFLAGS=
 LIBS=
 OBJS=Ast.o main.o Metastring.o Parser.o Tokenizer.o Tokens.o errors.o NFA.o Alphabet.o NFAevaluator.o
