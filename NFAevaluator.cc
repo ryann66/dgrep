@@ -4,6 +4,7 @@
 #include <stdexcept>
 
 #include "NFAevaluator.h"
+#include "errors.h"
 
 using std::thread;
 using std::vector;
@@ -12,7 +13,6 @@ using std::unique_lock;
 using std::mutex;
 using std::chrono::milliseconds;
 using std::chrono::duration;
-using std::runtime_error;
 
 using metastring::Metastring;
 
@@ -42,7 +42,7 @@ void threadLoop(ParallelNFAevaluator* eval) {
                 for (Edge* out : s.state->outgoing) {
                     try {
                         out->traverse(s, newStates);
-                    } catch (runtime_error*) { }
+                    } catch (trivial_error*) { }
                 }
 
                 if (!newStates.empty()) {

@@ -7,8 +7,7 @@
 #include "Tokens.h"
 #include "Tokenizer.h"
 #include "Parser.h"
-#include "truncation_error.h"
-#include "syntax_error.h"
+#include "errors.h"
 #include "AST.h"
 #include "NFA.h"
 

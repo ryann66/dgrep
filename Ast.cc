@@ -1,7 +1,8 @@
 #include <stdexcept>
 
 #include "AST.h"
-#include "truncation_error.h"
+#include "errors.h"
+#include "globals.h"
 
 using std::string;
 using std::set;

@@ -5,7 +5,7 @@
 #include <stdexcept>
 
 #include "Tokenizer.h"
-#include "syntax_error.h"
+#include "errors.h"
 #include "globals.h"
 #include "Alphabet.h"
 

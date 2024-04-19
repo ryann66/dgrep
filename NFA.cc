@@ -2,7 +2,7 @@
 #include <unordered_map>
 
 #include "NFA.h"
-#include "truncation_error.h"
+#include "errors.h"
 #include "NFAevaluator.h"
 
 using std::set;

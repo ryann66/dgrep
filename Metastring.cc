@@ -4,8 +4,7 @@
 
 #include "Metastring.h"
 #include "globals.h"
-#include "truncation_error.h"
-#include "nonmatching_error.h"
+#include "errors.h"
 
 namespace metastring {
 

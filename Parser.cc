@@ -2,7 +2,7 @@
 #include <algorithm>
 
 #include "Parser.h"
-#include "syntax_error.h"
+#include "errors.h"
 
 using std::vector;
 using std::find_if;
