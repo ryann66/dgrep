@@ -5,6 +5,7 @@
 #include "Metastring.h"
 #include "globals.h"
 #include "truncation_error.h"
+#include "nonmatching_error.h"
 
 namespace metastring {
 
@@ -105,7 +106,7 @@ Metastring operator+(const Metastring& lhs, const string& rhs) {
 Metastring& Metastring::appendBackref(unsigned char br) {
     // find backref
     auto iter = backrefs.find(br);
-    if (iter == backrefs.end()) throw new logic_error("Undefined backref");
+    if (iter == backrefs.end()) throw new nonmatching_error("Backref not defined");
     size_t start = (*iter).second.first, end = (*iter).second.second;
     if (end < start) throw new logic_error("Open backref");
     size_t len = end - start;
@@ -135,7 +136,6 @@ string Metastring::toString() const {
 }
 
 Metastring& Metastring::startBackrefLogging(unsigned char br) {
-    if (backrefs.find(br) != backrefs.end()) throw new logic_error("Double declaration of backrefs");
     pair<size_t, size_t> p(strlen, 0);
     backrefs[br] = p;
     return *this;
@@ -144,7 +144,6 @@ Metastring& Metastring::startBackrefLogging(unsigned char br) {
 Metastring& Metastring::endBackrefLogging(unsigned char br) {
     auto iter = backrefs.find(br);
     if (iter == backrefs.end()) throw new logic_error("Undefined backref");
-    if (iter->second.second) throw new logic_error("Double closure of backref");
     iter->second.second = strlen;
     return *this;
 }

@@ -43,7 +43,7 @@ NFAevaluator.o: NFAevaluator.cc NFAevaluator.h
 main.o: main.cc Tokens.h Tokenizer.h Parser.h Ast.h Metastring.h truncation_error.h globals.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-Metastring.o: Metastring.cc Metastring.h globals.h truncation_error.h
+Metastring.o: Metastring.cc Metastring.h globals.h truncation_error.h nonmatching_error.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 Parser.o: Parser.cc Parser.h Ast.h Metastring.h Tokens.h syntax_error.h
