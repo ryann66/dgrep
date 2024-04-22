@@ -452,7 +452,7 @@ Alphabet* readCharset(const char** strPointer) {
             }
             cstr[i] = '\0';
             string str(cstr);
-            delete cstr;
+            delete[] cstr;
             input++;
             // input points to ]
 
