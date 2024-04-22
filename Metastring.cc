@@ -62,7 +62,7 @@ Metastring& Metastring::operator=(const Metastring& other) {
 }
 
 Metastring::~Metastring() {
-    delete str;
+    delete[] str;
 }
 
 bool operator==(const Metastring& lhs, const Metastring& rhs) {

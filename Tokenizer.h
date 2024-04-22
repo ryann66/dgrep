@@ -20,6 +20,6 @@ std::vector<Token*> tokenize(std::string& str, std::set<unsigned char>* backrefs
  * On success, leaves the string pointer pointing to the closing ] of the character set
  *  returns the parsed character set
  * On failure, throws runtime_error* and strPointer is undefined
- * NOTE: Caller is responsible for freeing returned token, unless it is nullptr
+ * NOTE: Caller is responsible for freeing returned alphabet
 */
 Alphabet* readCharset(const char** strPointer);

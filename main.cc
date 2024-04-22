@@ -65,11 +65,13 @@ int main(int argc, char** argv) {
                         return EXIT_FAILURE;
                     }
                     alphabet = *newAlph;
+                    delete newAlph;
                     if (alphabet.empty()) {
                         cout << "Error: empty alphabet" << endl;
                         return EXIT_FAILURE;
                     }
                 } catch (runtime_error* e) {
+                    delete e;
                     cout << "Poorly formed alphabet" << endl;
                     return EXIT_FAILURE;
                 }
@@ -155,6 +157,7 @@ int main(int argc, char** argv) {
 
     } catch (runtime_error* e) {
         cout << "Error: " << e->what() << endl;
+        delete e;
         return EXIT_FAILURE;
     }
 

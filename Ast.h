@@ -20,6 +20,8 @@ class Node {
     virtual Node& operator=(const Node&) = default;
 
  public:
+    virtual ~Node() = default;
+    
 	virtual nfa::Module buildModule() const = 0;
 	virtual void removeUnusedBackrefs(std::set<unsigned char>&) { }
 };
@@ -30,6 +32,7 @@ class LiteralNode : public Node {
 	LiteralNode(const char* str) : lit(str) { }
     LiteralNode(const LiteralNode&) = default;
     virtual LiteralNode& operator=(const LiteralNode&) = default;
+    virtual ~LiteralNode() = default;
 
  public:
 	virtual nfa::Module buildModule() const;
@@ -43,6 +46,7 @@ class CharsetNode : public Node {
     CharsetNode(const CharsetToken& token) : chs(token.chars) { }
     CharsetNode(const CharsetNode&) = default;
     virtual CharsetNode& operator=(const CharsetNode&) = default;
+    virtual ~CharsetNode() = default;
 
  public:
 	virtual nfa::Module buildModule() const;
@@ -91,6 +95,7 @@ class BackrefNode : public Node {
     BackrefNode(unsigned char br) : backref(br) { }
     BackrefNode(const BackrefNode&) = default;
     virtual BackrefNode& operator=(const BackrefNode&) = default;
+    virtual ~BackrefNode() = default;
 
  public:
 	virtual nfa::Module buildModule() const;

@@ -42,7 +42,9 @@ void threadLoop(ParallelNFAevaluator* eval) {
                 for (Edge* out : s.state->outgoing) {
                     try {
                         out->traverse(s, newStates);
-                    } catch (trivial_error*) { }
+                    } catch (trivial_error* t) {
+                        delete t;
+                    }
                 }
 
                 if (!newStates.empty()) {
