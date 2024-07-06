@@ -21,7 +21,7 @@ LiteralToken::LiteralToken(string& s) : Token(Literal), lit(s) {
     }
 }
 
-LiteralToken::LiteralToken(char c) : Token(Literal), lit(c, 1) {
+LiteralToken::LiteralToken(char c) : Token(Literal), lit(1, c) {
     if (!alphabet.contains(c)) throw new range_error("'" + string(1,c) + "' is not in alphabet");
 }
 
